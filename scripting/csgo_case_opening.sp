@@ -64,6 +64,8 @@ public void OnPluginStart()
 	g_hKillReward = CreateConVar("sm_cases_kill_reward", "10", "How many credits does a player gets for a kill.", FCVAR_NOTIFY, true, 0.0);
 	g_hKillReward.AddChangeHook(OnConvarsChanged);
 	
+	AutoExecConfig(true, "case_opening_kratoss");
+	
 	g_hBalance = new Cookie("Case Opening Balance", "Stores the credits of the players", CookieAccess_Private);
 	
 	LoadTranslations("case_opening.phrases");
