@@ -1,0 +1,466 @@
+"Phrases"
+{
+	"NoSkins"
+	{
+		"en"			"You have no skins"
+	}
+
+	"SkinSold"
+	{
+		"#format"		"{1:s},{2:s},{3:i}"
+		"en"			"[{lime}CASES{default}] You sold your {1}{2}{default} for{green} {3} credits{default}."
+	}
+
+	"QuickSell"
+	{
+		"#format"		"{1:i}"
+		"en"			"Quick Sell [+{1} Credits]"
+	}
+
+	"SkinsMarketItem"
+	{
+		"#format"		"{1:s},{2:i}"
+		"en"			"{1} | Price: [{2}]"
+	}
+
+	"SkinsMarketTitle"
+	{
+		"#format"		"{1:s},{2:i},{3:i}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: {2} ✦\n    Skins: {3}\n \n--==| Skins Market - Buy Skins with credits\n "
+	}
+
+	"NewSeed"
+	{
+		"#format"		"{1:i}"
+		"en"			"[{lime}CASES{default}] New seed:{orange} {1}{default}."
+	}
+
+	"InvalidAmount"
+	{
+		"en"			"[{lime}CASES{default}] Invalid amount."
+	}
+	
+	"NameInChat"
+	{
+		"en"			"[{lime}CASES{default}] Please type in chat your nametag."
+	}
+
+	"FloatInChat"
+	{
+		"en"			"[{lime}CASES{default}] Please type in chat the float."
+	}
+
+	"ToggleST"
+	{
+		"#format"		"{1:i}"
+		"en"			"Toggle StarTrack | Price: [{1}] | (For this weapon)"
+	}
+
+	"RandomSeed"
+	{
+		"#format"		"{1:i}"
+		"en"			"Get a random pattern | Price: [{1}] | (For this weapon)"
+	}
+	
+	"SetNameTag"
+	{
+		"#format"		"{1:i}"
+		"en"			"Set a nametag | Price: [{1}] | (For this weapon)"
+	}
+
+	"SetFloat"
+	{
+		"#format"		"{1:i}"
+		"en"			"Set a float | Price: [{1}] | (For this weapon)"
+	}
+
+	"Equipt"
+	{
+		"#format"		"{1:s}"
+		"en"			"Equip {1}"
+	}
+
+	"SkinBoughtAll"
+	{
+		"#format"		"{1:N},{2:s},{3:s},{4:i}"
+		"en"			"[{lime}CASES{default}] {orange}{1}{default} has bought {2}{3}{default}({green}{4} credits{default})."
+	}
+
+	"SkinBought"
+	{
+		"#format"		"{1:s},{2:s},{3:i}"
+		"en"			"[{lime}CASES{default}] You have bought {1}{2}{default}({green}{3} credits{default})."
+	}
+
+	"SkinOpenedAll"
+	{
+		"#format"		"{1:N},{2:s},{3:s},{4:i}"
+		"en"			"[{lime}CASES{default}] {orange}{1}{default} have opened {2}{3}{default}({green}{4} credits{default})."
+	}
+	
+	"SkinOpened"
+	{
+		"#format"		"{1:s},{2:s},{3:i}"
+		"en"			"[{lime}CASES{default}] You have opened {1}{2}{default}({green}{3} credits{default})."
+	}
+	
+	"SkinAlreadyOwned"
+	{
+		"#format"		"{1:s},{2:s},{3:i}"
+		"en"			"[{lime}CASES{default}] You opened {1}{2}{default}, but you already have this skin. You got{green} {3}{default} credits back."
+	}
+	
+	"ConfigureSkin"
+	{
+		"#format"		"{1:s},{2:i},{3:i},{4:t}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: {2} ✦\n    Skins: {3}\n \n--==| Configure this {4} skin.\n "
+	}
+
+	"SkinsMenu"
+	{
+		"#format"		"{1:s},{2:i},{3:i},{4:t}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: {2} ✦\n    Skins: {3}\n \n--==| Your {4} skins.\n "
+	}
+
+	"InventoryMainMenu"
+	{
+		"#format"		"{1:s},{2:i},{3:i}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: {2} ✦\n    Skins: {3}\n \n--==| Your inventory\n "
+	}
+
+	"MainMenuTitle"
+	{
+		"#format"		"{1:s},{2:i},{3:i}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: {2} ✦\n    Skins: {3}\n \n--==| Main Menu\n "
+	}
+	
+	"OpenCases"
+	{
+		"en"			"Open some cases"
+	}
+	
+	"Inventory"
+	{
+		"en"			"See your inventory"
+	}
+	
+	"UnlockSkins"
+	{
+		"en"			"Buy Skins"
+	}
+	
+	"CasesTitle"
+	{
+		"#format"		"{1:s},{2:i},{3:i}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: {2} ✦\n    Skins: {3}\n \n--==| Open cases\n "
+	}
+	
+	"PreviewCasesTitle"
+	{
+		"#format"		"{1:s},{2:i},{3:i}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: {2} ✦\n    Skins: {3}\n \n--==| Possible drops from this case\n "
+	}
+	
+	"CasesItem"
+	{
+		"#format"		"{1:s},{2:i}"
+		"en"			"{1} | Price: [{2}]"
+	}
+	
+	"PreviewModeOFF"
+	{
+		"en"			"Preview Case Drops: [OFF]\n "
+	}
+	
+	"PreviewModeON"
+	{
+		"en"			"Preview Case Drops: [ON]\n "
+	}
+	
+	"CreditsAdded"
+	{
+		"#format"		"{1:i},{2:N}"
+		"en"			"{green}[CASES]{default} You have received {green}{1} credits{default} from {green}{2}{default}."
+	}
+	
+	"CreditsAddedAdmin"
+	{
+		"#format"		"{1:i},{2:N}"
+		"en"			"{green}[CASES]{default} You gave {green}{1}{default} credits to {green}{2}{default}."
+	}
+	
+	"weapon_galilar"
+	{
+		"en"	"Galil AR"
+	}
+	
+	"weapon_awp"
+	{
+		"en"	"AWP"
+	}
+	
+	"weapon_m4a1"
+	{
+		"en"	"M4A4"
+	}
+	
+	"weapon_m4a1_silencer"
+	{
+		"en"	"M4A1-S"
+	}
+	
+	"weapon_cz75a"
+	{
+		"en"	"CZ75-Auto"
+	}
+	
+	"weapon_revolver"
+	{
+		"en"	"R8 Revolver"
+	}
+	
+	"weapon_deagle"
+	{
+		"en"	"Desert Eagle"
+	}
+	
+	"weapon_g3sg1"
+	{
+		"en"	"G3SG1"
+	}
+	
+	"weapon_scar20"
+	{
+		"en"	"SCAR-20"
+	}
+	
+	"weapon_sawedoff"
+	{
+		"en"	"Sawed-Off"
+	}
+	
+	"weapon_negev"
+	{
+		"en"	"Negev"
+	}
+	
+	"weapon_ssg08"
+	{
+		"en"	"SSG 08"
+	}
+	
+	"weapon_sg556"
+	{
+		"en"	"SG 553"
+	}
+	
+	"weapon_nova"
+	{
+		"en"	"Nova"
+	}
+	
+	"weapon_xm1014"
+	{
+		"en"	"XM1014"
+	}
+	
+	"weapon_p90"
+	{
+		"en"	"P90"
+	}
+	
+	"weapon_p250"
+	{
+		"en"	"P250"
+	}
+	
+	"weapon_fiveseven"
+	{
+		"en"	"Five-SeveN"
+	}
+	
+	"weapon_aug"
+	{
+		"en"	"AUG"
+	}
+	
+	"weapon_elite"
+	{
+		"en"	"Dual Berettas"
+	}
+	
+	"weapon_m249"
+	{
+		"en"	"M249"
+	}
+	
+	"weapon_mac10"
+	{
+		"en"	"MAC-10"
+	}
+	
+	"weapon_mag7"
+	{
+		"en"	"MAG-7"
+	}
+	
+	"weapon_mp7"
+	{
+		"en"	"MP7"
+	}
+	
+	"weapon_mp9"
+	{
+		"en"	"MP9"
+	}
+	
+	"weapon_tec9"
+	{
+		"en"	"Tec-9"
+	}
+	
+	"weapon_ump45"
+	{
+		"en"	"UMP-45"
+	}
+	
+	"weapon_ak47"
+	{
+		"en"	"AK-47"
+	}
+	
+	"weapon_bizon"
+	{
+		"en"	"PP-Bizon"
+	}
+	
+	"weapon_usp_silencer"
+	{
+		"en"	"USP-S"
+	}
+	
+	"weapon_hkp2000"
+	{
+		"en"	"P2000"
+	}
+	
+	"weapon_famas"
+	{
+		"en"	"FAMAS"
+	}
+	
+	"weapon_glock"
+	{
+		"en"	"Glock-18"
+	}
+	
+	"weapon_mp5sd"
+	{
+		"en"	"MP5-SD"
+	}
+	
+	"weapon_bayonet"
+	{
+		"en"	"★ Bayonet"
+	}
+	
+	"weapon_knife_gut"
+	{
+		"en"	"★ Gut Knife"
+	}
+	
+	"weapon_knife_flip"
+	{
+		"en"	"★ Flip Knife"
+	}
+	
+	"weapon_knife_m9_bayonet"
+	{
+		"en"	"★ M9 Bayonet"
+	}
+	
+	"weapon_knife_karambit"
+	{
+		"en"	"★ Karambit"
+	}
+	
+	"weapon_knife_tactical"
+	{
+		"en"	"★ Huntsman Knife"
+	}
+	
+	"weapon_knife_butterfly"
+	{
+		"en"	"★ Butterfly Knife"
+	}
+	
+	"weapon_knife_falchion"
+	{
+		"en"	"★ Falchion Knife"
+	}
+	
+	"weapon_knife_push"
+	{
+		"en"	"★ Shadow Daggers"
+	}
+	
+	"weapon_knife_survival_bowie"
+	{
+		"en"	"★ Bowie Knife"
+	}
+	
+	"weapon_knife_ursus"
+	{
+		"en"	"★ Ursus"
+	}
+	
+	"weapon_knife_gypsy_jackknife"
+	{
+		"en"	"★ Navaja"
+	}
+	
+	"weapon_knife_stiletto"
+	{
+		"en"	"★ Stiletto"
+	}
+	
+	"weapon_knife_widowmaker"
+	{
+		"en"	"★ Talon"
+	}
+	
+	"weapon_knife_css"
+	{
+		"en"	"★ Classic Knife"
+	}
+	
+	"weapon_knife_cord"
+	{
+		"en"	"★ Paracord Knife"
+	}
+	
+	"weapon_knife_canis"
+	{
+		"en"	"★ Survival Knife"
+	}
+	
+	"weapon_knife_outdoor"
+	{
+		"en"	"★ Nomad Knife"
+	}
+	
+	"weapon_knife_skeleton"
+	{
+		"en"	"★ Skeleton Knife"
+	}
+	
+	"weapon_knife_t"
+	{
+		"en"	"Knife"
+	}
+	
+	"weapon_knife"
+	{
+		"en"	"Knife"
+	}
+}
