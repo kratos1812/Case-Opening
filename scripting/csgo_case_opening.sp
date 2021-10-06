@@ -8,7 +8,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define PLUGIN_VERSION "BETA"
+#define PLUGIN_VERSION "1.0.1b"
 
 // Custom files.
 #include "inc/globals.inc"
