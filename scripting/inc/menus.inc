@@ -435,6 +435,8 @@ int Market_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 			AddSkinToInventory(iClient, iItemId, hItem.iWeaponIndex);
 			ClientCommand(iClient, "play %s", g_sRaritySounds[hItem.iRarity]);
 			
+			SetBalance(iClient, GetBalance(iClient) - hItem.iPrice);
+			
 			ShowSkinsMarket(iClient);
 		}
 	}
