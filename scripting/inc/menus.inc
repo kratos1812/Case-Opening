@@ -219,7 +219,7 @@ int SkinsMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 		}
 		case MenuAction_Select:
 		{
-			char sKey[32];
+			char sKey[128];
 			hMenu.GetItem(iParam2, sKey, sizeof(sKey));
 			
 			if(iParam2 != 0) // Default
@@ -235,7 +235,6 @@ int SkinsMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 				
 				int iSkinId = hClientSkins.Get(iParam2 - 1);
 				Format(sKey, sizeof(sKey), "%s;%i", sKey, iSkinId);
-				
 				int iBalance = GetBalance(iClient);
 				
 				GetSkinName(iSkinId, sSkinName, sizeof(sSkinName));
@@ -294,9 +293,9 @@ int SkinMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 		}
 		case MenuAction_Select:
 		{
-			char sKey[64], sData[2][32];
+			char sKey[128], sData[2][128];
 			hMenu.GetItem(iParam2, sKey, sizeof(sKey));
-			ExplodeString(sKey, ";",  sData, sizeof(sData), sizeof(sData[]));
+			ExplodeString(sKey, ";", sData, sizeof(sData), sizeof(sData[]));
 			
 			switch(iParam2)
 			{
