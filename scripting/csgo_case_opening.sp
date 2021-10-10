@@ -8,7 +8,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define PLUGIN_VERSION "1.0.1b"
+#define PLUGIN_VERSION "1.0.3b"
 
 // Custom files.
 #include "inc/globals.inc"
@@ -190,6 +190,7 @@ public void OnConfigsExecuted()
 	g_iFloatPrice = g_hFloatPrice.IntValue;
 	g_iSeedPrice = g_hSeedPrice.IntValue;
 	g_iStarTrackPrice = g_hStatTrackPrice.IntValue;
+	g_iNameTagPrice = g_hNameTagPrice.IntValue;
 	g_iKillReward = g_hKillReward.IntValue;
 }
 

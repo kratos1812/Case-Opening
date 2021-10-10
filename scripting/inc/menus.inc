@@ -229,7 +229,7 @@ int SkinsMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 				ArrayList hClientSkins;
 				g_hInventory[iClient].GetValue(sKey, hClientSkins);
 				
-				Menu hSkinsMenu = new Menu(SkinMenu_Handler);
+				Menu hSkinsMenu = new Menu(SkinMenu_Handler, MENU_ACTIONS_ALL);
 				hSkinsMenu.SetTitle("%T", "ConfigureSkin", iClient, PLUGIN_VERSION, GetBalance(iClient), GetTotalSkinsCount(iClient), sKey); 
 				hSkinsMenu.ExitBackButton = true;
 				
@@ -241,8 +241,8 @@ int SkinsMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 				Format(sItem, sizeof(sItem), "%T", "Equipt", iClient, sSkinName);
 				hSkinsMenu.AddItem(sKey, sItem);
 				
-				Format(sItem, sizeof(sItem), "%T", "SetNameTag", iClient, g_iStarTrackPrice);
-				hSkinsMenu.AddItem(sKey, sItem, iBalance < g_iStarTrackPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+				Format(sItem, sizeof(sItem), "%T", "SetNameTag", iClient, g_iNameTagPrice);
+				hSkinsMenu.AddItem(sKey, sItem, iBalance < g_iNameTagPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
 				
 				Format(sItem, sizeof(sItem), "%T", "SetFloat", iClient, g_iFloatPrice);
 				hSkinsMenu.AddItem(sKey, sItem, iBalance < g_iFloatPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
@@ -284,6 +284,32 @@ int SkinMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 {
 	switch(iAction)
 	{
+		case MenuAction_DrawItem:
+		{
+			int iBalance = GetBalance(iClient);
+			
+			switch(iParam2)
+			{
+				case 1: // Set nametag
+				{
+					return iBalance < g_iNameTagPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT;
+				}
+				case 2: // Set float
+				{
+					return iBalance < g_iFloatPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT;
+				}
+				case 3: // Random seed
+				{
+					return iBalance < g_iSeedPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT;
+				}
+				case 4: // Toggle StarTrack
+				{
+					return iBalance < g_iStarTrackPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT;
+				}
+			}
+			return ITEMDRAW_DEFAULT;
+		}
+		
 		case MenuAction_End:
 		{
 			if(iParam2 != MenuEnd_Selected)
@@ -373,6 +399,7 @@ int SkinMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 			
 			if(iParam2 != 5)
 			{
+				hMenu.SetTitle("%T", "ConfigureSkin", iClient, PLUGIN_VERSION, GetBalance(iClient), GetTotalSkinsCount(iClient), sData[0]); 
 				hMenu.Display(iClient, MENU_TIME_FOREVER);
 			}
 		}
@@ -382,6 +409,8 @@ int SkinMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 	{
 		ShowInventory(iClient);
 	}
+	
+	return 0;
 }
 
 void ShowSkinsMarket(int iClient)
