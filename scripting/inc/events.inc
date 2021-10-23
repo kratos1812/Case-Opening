@@ -7,7 +7,7 @@ void Event_PlayerDeath(Event hEvent, const char[] sName, bool bDontBroadcast)
 	{
 		if(iClient > 0 && IsClientInGame(iClient) && !IsFakeClient(iClient))
 		{
-			SetBalance(iClient, GetBalance(iClient) + g_iKillReward);
+			SetBalance(iClient, GetBalance(iClient) + g_fKillReward);
 		}
 	}
 }

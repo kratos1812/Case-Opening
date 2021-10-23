@@ -9,7 +9,8 @@ void UnlockSkin(int iClient, int iCaseId)
 	
 	enum_skin hWeaponSkin;
 	
-	SetBalance(iClient, GetBalance(iClient) - g_hCasesPrices.Get(iCaseId)); // Remove credits
+	float fPrice = g_hCasesPrices.Get(iCaseId);
+	SetBalance(iClient, GetBalance(iClient) - fPrice); // Remove credits
 	
 	for(int iCaseSkinId = 0; iCaseSkinId < hSkins.Length; iCaseSkinId++) // Loop through existing skins
 	{
@@ -39,20 +40,20 @@ void UnlockSkin(int iClient, int iCaseId)
 	ClientCommand(iClient, "play %s", g_sRaritySounds[hWeaponSkin.iRarity]);
 	if(ClientHasSkin(iClient, iItemId, hWeaponSkin.iWeaponIndex)) // If client already has this skin
 	{
-		int iReturn = g_hCasesReturns.Get(iCaseId);
-		SetBalance(iClient, GetBalance(iClient) + iReturn);
+		float fReturn = g_hCasesReturns.Get(iCaseId);
+		SetBalance(iClient, GetBalance(iClient) + fReturn);
 		
-		CPrintToChat(iClient, "%T", "SkinAlreadyOwned", iClient, g_sItemRarity[hWeaponSkin.iRarity][1], hWeaponSkin.szName, iReturn);
+		CPrintToChat(iClient, "%T", "SkinAlreadyOwned", iClient, g_sItemRarity[hWeaponSkin.iRarity][1], hWeaponSkin.szName, fReturn);
 	}
 	else
 	{
 		if(hWeaponSkin.iRarity > 3)
 		{
-			CPrintToChat(iClient, "%T", "SkinOpenedAll", iClient, iClient, g_sItemRarity[hWeaponSkin.iRarity][1], hWeaponSkin.szName, hWeaponSkin.iPrice);
+			CPrintToChatAll("%T", "SkinOpenedAll", iClient, iClient, g_sItemRarity[hWeaponSkin.iRarity][1], hWeaponSkin.szName, hWeaponSkin.fPrice);
 		}
 		else
 		{
-			CPrintToChat(iClient, "%T", "SkinOpened", iClient, g_sItemRarity[hWeaponSkin.iRarity][1], hWeaponSkin.szName, hWeaponSkin.iPrice);
+			CPrintToChat(iClient, "%T", "SkinOpened", iClient, g_sItemRarity[hWeaponSkin.iRarity][1], hWeaponSkin.szName, hWeaponSkin.fPrice);
 		}
 		
 		DB_InsertNewSkin(iClient, iItemId);

@@ -235,28 +235,37 @@ int SkinsMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 				
 				int iSkinId = hClientSkins.Get(iParam2 - 1);
 				Format(sKey, sizeof(sKey), "%s;%i", sKey, iSkinId);
-				int iBalance = GetBalance(iClient);
+				float fBalance = GetBalance(iClient);
 				
 				GetSkinName(iSkinId, sSkinName, sizeof(sSkinName));
 				Format(sItem, sizeof(sItem), "%T", "Equipt", iClient, sSkinName);
 				hSkinsMenu.AddItem(sKey, sItem);
 				
-				Format(sItem, sizeof(sItem), "%T", "SetNameTag", iClient, g_iNameTagPrice);
-				hSkinsMenu.AddItem(sKey, sItem, iBalance < g_iNameTagPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+				Format(sItem, sizeof(sItem), "%T", "SetNameTag", iClient, g_fNameTagPrice);
+				hSkinsMenu.AddItem(sKey, sItem, fBalance < g_fNameTagPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
 				
-				Format(sItem, sizeof(sItem), "%T", "SetFloat", iClient, g_iFloatPrice);
-				hSkinsMenu.AddItem(sKey, sItem, iBalance < g_iFloatPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+				Format(sItem, sizeof(sItem), "%T", "SetFloat", iClient, g_fFloatPrice);
+				hSkinsMenu.AddItem(sKey, sItem, fBalance < g_fFloatPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
 				
-				Format(sItem, sizeof(sItem), "%T", "RandomSeed", iClient, g_iSeedPrice);
-				hSkinsMenu.AddItem(sKey, sItem, iBalance < g_iSeedPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+				Format(sItem, sizeof(sItem), "%T", "RandomSeed", iClient, g_fSeedPrice);
+				hSkinsMenu.AddItem(sKey, sItem, fBalance < g_fSeedPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
 				
-				Format(sItem, sizeof(sItem), "%T", "ToggleST", iClient, g_iStarTrackPrice);
-				hSkinsMenu.AddItem(sKey, sItem, iBalance < g_iStarTrackPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+				Format(sItem, sizeof(sItem), "%T", "ToggleST", iClient, g_fStarTrackPrice);
+				hSkinsMenu.AddItem(sKey, sItem, fBalance < g_fStarTrackPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
 				
 				enum_skin hSkin;
 				g_hSkins.GetArray(iSkinId, hSkin);
-				Format(sItem, sizeof(sItem), "%T", "QuickSell", iClient, hSkin.iPrice);
-				hSkinsMenu.AddItem(sKey, sItem);
+				
+				if(hSkin.fPrice != 0.0)
+				{
+					Format(sItem, sizeof(sItem), "%T", "QuickSell", iClient, hSkin.fPrice);
+					hSkinsMenu.AddItem(sKey, sItem);
+				}
+				else
+				{
+					Format(sItem, sizeof(sItem), "%T", "QuickSell_NoPrice", iClient);
+					hSkinsMenu.AddItem(sKey, sItem, ITEMDRAW_DISABLED);
+				}
 				
 				hSkinsMenu.Display(iClient, MENU_TIME_FOREVER);				
 			}
@@ -286,25 +295,25 @@ int SkinMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 	{
 		case MenuAction_DrawItem:
 		{
-			int iBalance = GetBalance(iClient);
+			float fBalance = GetBalance(iClient);
 			
 			switch(iParam2)
 			{
 				case 1: // Set nametag
 				{
-					return iBalance < g_iNameTagPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT;
+					return fBalance < g_fNameTagPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT;
 				}
 				case 2: // Set float
 				{
-					return iBalance < g_iFloatPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT;
+					return fBalance < g_fFloatPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT;
 				}
 				case 3: // Random seed
 				{
-					return iBalance < g_iSeedPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT;
+					return fBalance < g_fSeedPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT;
 				}
 				case 4: // Toggle StarTrack
 				{
-					return iBalance < g_iStarTrackPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT;
+					return fBalance < g_fStarTrackPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT;
 				}
 			}
 			return ITEMDRAW_DEFAULT;
@@ -343,26 +352,26 @@ int SkinMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 					g_bWaitingForName[iClient] = true;
 					CPrintToChat(iClient, "%T", "NameInChat", iClient);
 					strcopy(g_sTempWeapon[iClient], sizeof(g_sTempWeapon[]), sData[0]);
-					SetBalance(iClient, GetBalance(iClient) - g_iNameTagPrice);
+					SetBalance(iClient, GetBalance(iClient) - g_fNameTagPrice);
 				}
 				case 2: // Set float
 				{
 					g_bWaintingForFloat[iClient] = true;
 					CPrintToChat(iClient, "%T", "FloatInChat", iClient);
 					strcopy(g_sTempWeapon[iClient], sizeof(g_sTempWeapon[]), sData[0]);
-					SetBalance(iClient, GetBalance(iClient) - g_iFloatPrice);
+					SetBalance(iClient, GetBalance(iClient) - g_fFloatPrice);
 				}
 				case 3: // Random seed
 				{
 					int iSeed = GetRandomInt(0, 8192);
 					Weapons_SetClientSeed(iClient, sData[0], iSeed);
 					CPrintToChat(iClient, "%T", "NewSeed", iClient, iSeed);
-					SetBalance(iClient, GetBalance(iClient) - g_iSeedPrice);
+					SetBalance(iClient, GetBalance(iClient) - g_fSeedPrice);
 				}
 				case 4: // Toggle StarTrack
 				{
 					Weapons_ToggleClientStarTrack(iClient, sData[0]);
-					SetBalance(iClient, GetBalance(iClient) - g_iStarTrackPrice);
+					SetBalance(iClient, GetBalance(iClient) - g_fStarTrackPrice);
 				}
 				case 5: // Quick sell
 				{
@@ -382,14 +391,14 @@ int SkinMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 						
 						Weapons_SetClientSkin(iClient, sData[0], 0);
 						
-						SetBalance(iClient, GetBalance(iClient) + hWeaponSkin.iPrice);
+						SetBalance(iClient, GetBalance(iClient) + hWeaponSkin.fPrice);
 						
 						iIndex = hClientSkins.FindValue(iItemId);
 						if(iIndex != -1)
 						{
 							hClientSkins.Erase(iIndex);
 						}
-						CPrintToChat(iClient, "%T", "SkinSold", iClient, g_sItemRarity[hWeaponSkin.iRarity][1], hWeaponSkin.szName, hWeaponSkin.iPrice);
+						CPrintToChat(iClient, "%T", "SkinSold", iClient, g_sItemRarity[hWeaponSkin.iRarity][1], hWeaponSkin.szName, hWeaponSkin.fPrice);
 						DB_DeleteSkin(GetSteamAccountID(iClient), iItemId);
 					}
 					
@@ -423,49 +432,10 @@ int Market_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 {
 	switch(iAction)
 	{
-		case MenuAction_DrawItem:
-		{
-			char sKey[10];
-			hMenu.GetItem(iParam2, sKey, sizeof(sKey));
-			
-			int iItemId = StringToInt(sKey);
-			
-			enum_skin hItem;
-			g_hSkins.GetArray(iItemId, hItem);
-			
-			int iBalance = GetBalance(iClient);
-			if(iBalance < hItem.iPrice || ClientHasSkin(iClient, iItemId, hItem.iWeaponIndex))
-			{
-				return ITEMDRAW_DISABLED;
-			}
-			return ITEMDRAW_DEFAULT;
-		}
 		case MenuAction_Select:
 		{
-			char sKey[10];
-			hMenu.GetItem(iParam2, sKey, sizeof(sKey));
-			
-			int iItemId = StringToInt(sKey);
-			
-			enum_skin hItem;
-			g_hSkins.GetArray(iItemId, hItem);
-			
-			if(hItem.iRarity > 3)
-			{
-				CPrintToChat(iClient, "%T", "SkinBoughtAll", iClient, iClient, g_sItemRarity[hItem.iRarity][1], hItem.szName, hItem.iPrice);
-			}
-			else
-			{
-				CPrintToChat(iClient, "%T", "SkinBought", iClient, g_sItemRarity[hItem.iRarity][1], hItem.szName, hItem.iPrice);
-			}
-			
-			DB_InsertNewSkin(iClient, iItemId);
-			AddSkinToInventory(iClient, iItemId, hItem.iWeaponIndex);
-			ClientCommand(iClient, "play %s", g_sRaritySounds[hItem.iRarity]);
-			
-			SetBalance(iClient, GetBalance(iClient) - hItem.iPrice);
-			
-			ShowSkinsMarket(iClient);
+			g_hMarketItemMenu[iParam2].SetTitle("%T", "SkinsMarketTitle", iClient, PLUGIN_VERSION, GetBalance(iClient), GetTotalSkinsCount(iClient));
+			g_hMarketItemMenu[iParam2].Display(iClient, MENU_TIME_FOREVER);
 		}
 	}
 	
@@ -475,4 +445,60 @@ int Market_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 	}
 	
 	return 0;
+}
+
+int MarketSkinItem_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
+{
+	switch(iAction)
+	{
+		case MenuAction_DrawItem:
+		{
+			enum_skin hWeaponSkin;
+			
+			char sInfo[32];
+			hMenu.GetItem(iParam2, sInfo, sizeof(sInfo));
+			
+			int iSkinId = StringToInt(sInfo);
+			
+			if(g_hSkins.GetArray(iSkinId, hWeaponSkin))
+			{
+				if(hWeaponSkin.fPrice == 0.0 || GetBalance(iClient) < hWeaponSkin.fPrice || ClientHasSkin(iClient, iSkinId, hWeaponSkin.iWeaponIndex))
+				{
+					return ITEMDRAW_DISABLED;
+				}
+			}
+			
+			return ITEMDRAW_DEFAULT;
+		}
+		
+		case MenuAction_Select:
+		{
+			char sKey[32];
+			hMenu.GetItem(iParam2, sKey, sizeof(sKey));
+			
+			int iItemId = StringToInt(sKey);
+			
+			enum_skin hItem;
+			g_hSkins.GetArray(iItemId, hItem);
+			
+			if(hItem.iRarity > 3)
+			{
+				CPrintToChatAll("%T", "SkinBoughtAll", iClient, iClient, g_sItemRarity[hItem.iRarity][1], hItem.szName, hItem.fPrice);
+			}
+			else
+			{
+				CPrintToChat(iClient, "%T", "SkinBought", iClient, g_sItemRarity[hItem.iRarity][1], hItem.szName, hItem.fPrice);
+			}
+			
+			DB_InsertNewSkin(iClient, iItemId);
+			AddSkinToInventory(iClient, iItemId, hItem.iWeaponIndex);
+			ClientCommand(iClient, "play %s", g_sRaritySounds[hItem.iRarity]);
+			
+			SetBalance(iClient, GetBalance(iClient) - hItem.fPrice);
+			
+			ShowSkinsMarket(iClient);
+		}
+	}		
+	
+	return ITEMDRAW_DEFAULT;
 }

@@ -31,36 +31,35 @@ stock void AddSkinToMenu(Menu hMenu, const char[] sSkinData)
 	ExplodeString(sSkinData, "-", sData, sizeof(sData), sizeof(sData[]));
 	if(g_hSkins.GetArray(StringToInt(sData[Data_Id]), hWeaponSkin))
 	{
-		Format(sItem, sizeof(sItem), "%s | Price: [%i]", hWeaponSkin.szName, hWeaponSkin.iPrice);
+		Format(sItem, sizeof(sItem), "%s | Price: [$%.2f]", hWeaponSkin.szName, hWeaponSkin.fPrice);
 		hMenu.AddItem("", sItem, ITEMDRAW_DISABLED);
 	}
 }
 
-stock int GetBalance(int iClient)
+stock float GetBalance(int iClient)
 {
 	if(AreClientCookiesCached(iClient))
 	{
-		char sBalance[11];
+		char sBalance[32];
 		g_hBalance.Get(iClient, sBalance, sizeof(sBalance));
 		
 		if(!sBalance[0])
 		{
-			return 0;
+			return 0.0;
 		}
-		
-		return StringToInt(sBalance);
+		return StringToFloat(sBalance);
 	}
 	else
 	{
 		LogMessage("Couldn't get balance for %L", iClient);
-		return -1;
+		return -1.0;
 	}
 }
 
-stock void SetBalance(int iClient, int iAmount) // It can be negative as well, doesnt really matter
+stock void SetBalance(int iClient, float fAmount) // It can be negative as well, doesnt really matter
 {
-	char sBalance[11];
-	Format(sBalance, sizeof(sBalance), "%i", iAmount);
+	char sBalance[32];
+	Format(sBalance, sizeof(sBalance), "%f", fAmount);// PrintToChatAll("sBalance = %f, fAmount = %f", sBalance, fAmount);
 	g_hBalance.Set(iClient, sBalance);		
 }
 

@@ -24,11 +24,11 @@ ConVar g_hStatTrackPrice;
 ConVar g_hNameTagPrice;
 ConVar g_hKillReward;
 
-int g_iFloatPrice;
-int g_iSeedPrice;
-int g_iStarTrackPrice;
-int g_iNameTagPrice;
-int g_iKillReward;
+float g_fFloatPrice;
+float g_fSeedPrice;
+float g_fStarTrackPrice;
+float g_fNameTagPrice;
+float g_fKillReward;
 
 enum struct enum_skin
 {
@@ -37,7 +37,7 @@ enum struct enum_skin
 	int iWeaponIndex; // THIS IS NOT THE DEF INDEX
 	int iSkinIndex;
 	int iRarity;
-	int iPrice;
+	float fPrice;
 }
 
 enum // Skin data enum, for a easier read of the code. 
@@ -67,6 +67,8 @@ int g_iWeaponDefIndex[] = {
 /*43*/ 519, /*44*/ 520, /*45*/ 522, /*46*/ 523, /*47*/ 23, /*48*/ 503, /*49*/ 517,
 /*50*/ 518, /*51*/ 521, /*52*/ 525
 };
+
+Menu g_hMarketItemMenu[sizeof(g_iWeaponDefIndex)];
 
 char g_sWeaponClasses[][] = {
 /* 0*/ "weapon_awp", /* 1*/ "weapon_ak47", /* 2*/ "weapon_m4a1", /* 3*/ "weapon_m4a1_silencer", /* 4*/ "weapon_deagle", /* 5*/ "weapon_usp_silencer", /* 6*/ "weapon_hkp2000", /* 7*/ "weapon_glock", /* 8*/ "weapon_elite", 

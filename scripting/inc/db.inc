@@ -56,6 +56,7 @@ public void SelectData_SQLCallback(Database hDatabase, DBResultSet hResults, con
 	if(iClient >= 1 && IsClientInGame(iClient))
 	{
 		int iSkinId;
+		int iSkinsCount = g_hSkins.Length;
 		
 		ArrayList hSkins = new ArrayList();
 		ArrayList hSkinsForIndex[sizeof(g_iWeaponDefIndex)];
@@ -65,6 +66,12 @@ public void SelectData_SQLCallback(Database hDatabase, DBResultSet hResults, con
 		while(hResults.FetchRow())
 		{
 			iSkinId = hResults.FetchInt(0);
+			
+			if(iSkinId >= iSkinsCount)
+			{
+				continue;
+			}
+			
 			hSkins.Push(iSkinId);
 		}
 		

@@ -9,11 +9,18 @@ void LoadItems()
 	{
 		if(hKeyValues.GotoFirstSubKey()) // Go to the first case and begin reading it
 		{
-			char szSkinName[64];
-			int iDefIndex, iSkinIndex, iRarity, iPrice;
+			char szSkinName[64], szSkinId[32];
+			int iDefIndex, iSkinIndex, iRarity;
+			float fPrice;
 			enum_skin pWeaponSkin;
 			
 			g_hSkins = new ArrayList(sizeof(pWeaponSkin)); // Create the list of the skins and begin reading the config
+			
+			for(int iWeaponIndex = 0; iWeaponIndex < sizeof(g_iWeaponDefIndex); iWeaponIndex++)
+			{
+				delete g_hMarketItemMenu[iWeaponIndex];
+				g_hMarketItemMenu[iWeaponIndex] = new Menu(MarketSkinItem_Handler, MENU_ACTIONS_ALL);
+			}
 			
 			do
 			{
@@ -22,15 +29,27 @@ void LoadItems()
 				iDefIndex = hKeyValues.GetNum("weapon_index");
 				iSkinIndex = hKeyValues.GetNum("skin_index");
 				iRarity = hKeyValues.GetNum("rarity");
-				iPrice = hKeyValues.GetNum("price");
+				fPrice = hKeyValues.GetFloat("price_market");
 				
 				pWeaponSkin.iWeaponIndex = iDefIndex;
 				pWeaponSkin.iSkinIndex = iSkinIndex;
 				pWeaponSkin.iRarity = iRarity;
-				pWeaponSkin.iPrice = iPrice;
+				pWeaponSkin.fPrice = fPrice;
 				strcopy(pWeaponSkin.szName, sizeof(enum_skin::szName), szSkinName);
 				
 				g_hSkins.PushArray(pWeaponSkin); // Add the skin data to the list
+				
+				hKeyValues.GetSectionName(szSkinId, sizeof(szSkinId));
+				
+				if(pWeaponSkin.fPrice > 0.0)
+				{
+					Format(szSkinName, sizeof(szSkinName), "%T", "BuySkinItem", LANG_SERVER, szSkinName, pWeaponSkin.fPrice);
+				}
+				else
+				{
+					Format(szSkinName, sizeof(szSkinName), "%T", "BuySkinItem_NoPrice", LANG_SERVER, szSkinName);
+				}
+				g_hMarketItemMenu[iDefIndex].AddItem(szSkinId, szSkinName);
 			}
 			while (hKeyValues.GotoNextKey());
 		}
@@ -72,8 +91,8 @@ void LoadCases()
 				hKeyValues.GetSectionName(szCaseName, sizeof(szCaseName)); // Get the case name
 				g_hCasesNames.PushString(szCaseName); // Save the case name
 				
-				g_hCasesPrices.Push(hKeyValues.GetNum("price")); // Get the case price
-				g_hCasesReturns.Push(hKeyValues.GetNum("return")); // Get the case return value
+				g_hCasesPrices.Push(hKeyValues.GetFloat("price")); // Get the case price
+				g_hCasesReturns.Push(hKeyValues.GetFloat("return")); // Get the case return value
 				
 				if(hKeyValues.JumpToKey("Skins")) // Go to the skins list and read them
 				{
@@ -129,7 +148,7 @@ void CreateMenus()
 	g_hMarketMenu = new Menu(Market_Handler, MENU_ACTIONS_ALL);
 	g_hMarketMenu.ExitBackButton = true;
 	
-	enum_skin hItem;
+	/*enum_skin hItem;
 	char sKey[10], sItem[64];
 	
 	for(int iItemId = 0; iItemId < g_hSkins.Length; iItemId++)
@@ -137,8 +156,16 @@ void CreateMenus()
 		g_hSkins.GetArray(iItemId, hItem);
 		
 		FormatEx(sKey, sizeof(sKey), "%i", iItemId);
-		FormatEx(sItem, sizeof(sItem), "%T", "SkinsMarketItem", LANG_SERVER, hItem.szName, hItem.iPrice);
+		FormatEx(sItem, sizeof(sItem), "%T", "SkinsMarketItem", LANG_SERVER, hItem.szName, hItem.fPrice);
 		
 		g_hMarketMenu.AddItem(sKey, sItem);
+	}*/
+	
+	char sItem[64];
+	
+	for(int iWeaponIndex = 0; iWeaponIndex < sizeof(g_sWeaponClasses); iWeaponIndex++)
+	{
+		Format(sItem, sizeof(sItem), "%T", g_sWeaponClasses[iWeaponIndex], LANG_SERVER);
+		g_hMarketMenu.AddItem("", sItem);
 	}
 }

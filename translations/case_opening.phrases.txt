@@ -7,26 +7,43 @@
 
 	"SkinSold"
 	{
-		"#format"		"{1:s},{2:s},{3:i}"
-		"en"			"[{lime}CASES{default}] You sold your {1}{2}{default} for{green} {3} credits{default}."
+		"#format"		"{1:s},{2:s},{3:.2f}"
+		"en"			"[{lime}CASES{default}] You sold your {1}{2}{default} for{green} ${3}{default}."
 	}
 
 	"QuickSell"
 	{
-		"#format"		"{1:i}"
-		"en"			"Quick Sell [+{1} Credits]"
+		"#format"		"{1:.2f}"
+		"en"			"Quick Sell [+${1} Credits]"
+	}
+	
+	"QuickSell_NoPrice"
+	{
+		"en"			"Quick Sell | Unavalabile[NO-PRICE]"
+	}
+	
+	"BuySkinItem"
+	{
+		"#format"		"{1:s},{2:.2f}"
+		"en"			"{1} | Price: [${2}]"
+	}
+	
+	"BuySkinItem_NoPrice"
+	{
+		"#format"		"{1:s}"
+		"en"			"{1} | Price: [UNAVALABILE]"
 	}
 
 	"SkinsMarketItem"
 	{
-		"#format"		"{1:s},{2:i}"
+		"#format"		"{1:s},{2:.2f}"
 		"en"			"{1} | Price: [{2}]"
 	}
 
 	"SkinsMarketTitle"
 	{
-		"#format"		"{1:s},{2:i},{3:i}"
-		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: {2} ✦\n    Skins: {3}\n \n--==| Skins Market - Buy Skins with credits\n "
+		"#format"		"{1:s},{2:.2f},{3:i}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n \n--==| Skins Market - Buy Skins with credits($)\n "
 	}
 
 	"NewSeed"
@@ -52,26 +69,26 @@
 
 	"ToggleST"
 	{
-		"#format"		"{1:i}"
-		"en"			"Toggle StarTrack | Price: [{1}] | (For this weapon)"
+		"#format"		"{1:.2f}"
+		"en"			"Toggle StarTrack | Price: [${1}] | (For this weapon)"
 	}
 
 	"RandomSeed"
 	{
-		"#format"		"{1:i}"
-		"en"			"Get a random pattern | Price: [{1}] | (For this weapon)"
+		"#format"		"{1:.2f}"
+		"en"			"Get a random pattern | Price: [${1}] | (For this weapon)"
 	}
 	
 	"SetNameTag"
 	{
-		"#format"		"{1:i}"
-		"en"			"Set a nametag | Price: [{1}] | (For this weapon)"
+		"#format"		"{1:.2f}"
+		"en"			"Set a nametag | Price: [${1}] | (For this weapon)"
 	}
 
 	"SetFloat"
 	{
-		"#format"		"{1:i}"
-		"en"			"Set a float | Price: [{1}] | (For this weapon)"
+		"#format"		"{1:.2f}"
+		"en"			"Set a float | Price: [${1}] | (For this weapon)"
 	}
 
 	"Equipt"
@@ -82,56 +99,62 @@
 
 	"SkinBoughtAll"
 	{
-		"#format"		"{1:N},{2:s},{3:s},{4:i}"
-		"en"			"[{lime}CASES{default}] {orange}{1}{default} has bought {2}{3}{default}({green}{4} credits{default})."
+		"#format"		"{1:N},{2:s},{3:s},{4:.2f}"
+		"en"			"[{lime}CASES{default}] {orange}{1}{default} has bought {2}{3}{default}({green}${4}{default})."
 	}
 
 	"SkinBought"
 	{
-		"#format"		"{1:s},{2:s},{3:i}"
-		"en"			"[{lime}CASES{default}] You have bought {1}{2}{default}({green}{3} credits{default})."
+		"#format"		"{1:s},{2:s},{3:.2f}"
+		"en"			"[{lime}CASES{default}] You have bought {1}{2}{default}({green}${3}{default})."
 	}
 
 	"SkinOpenedAll"
 	{
-		"#format"		"{1:N},{2:s},{3:s},{4:i}"
-		"en"			"[{lime}CASES{default}] {orange}{1}{default} have opened {2}{3}{default}({green}{4} credits{default})."
+		"#format"		"{1:N},{2:s},{3:s},{4:.2f}"
+		"en"			"[{lime}CASES{default}] {orange}{1}{default} have opened {2}{3}{default}({green}${4}{default})."
 	}
 	
 	"SkinOpened"
 	{
-		"#format"		"{1:s},{2:s},{3:i}"
-		"en"			"[{lime}CASES{default}] You have opened {1}{2}{default}({green}{3} credits{default})."
+		"#format"		"{1:s},{2:s},{3:.2f}"
+		"en"			"[{lime}CASES{default}] You have opened {1}{2}{default}({green}${3}{default})."
 	}
 	
 	"SkinAlreadyOwned"
 	{
-		"#format"		"{1:s},{2:s},{3:i}"
-		"en"			"[{lime}CASES{default}] You opened {1}{2}{default}, but you already have this skin. You got{green} {3}{default} credits back."
+		"#format"		"{1:s},{2:s},{3:.2f}"
+		"en"			"[{lime}CASES{default}] You opened {1}{2}{default}, but you already have this skin. You got{green} ${3}{default} credits back."
+	}
+	
+	"BuyWeaponSkin"
+	{
+		"#format"		"{1:s},{2:.2f},{3:i},{4:t}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n \n--==| Buy {4} skins.\n "
 	}
 	
 	"ConfigureSkin"
 	{
-		"#format"		"{1:s},{2:i},{3:i},{4:t}"
-		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: {2} ✦\n    Skins: {3}\n \n--==| Configure this {4} skin.\n "
+		"#format"		"{1:s},{2:.2f},{3:i},{4:t}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n \n--==| Configure this {4} skin.\n "
 	}
 
 	"SkinsMenu"
 	{
-		"#format"		"{1:s},{2:i},{3:i},{4:t}"
-		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: {2} ✦\n    Skins: {3}\n \n--==| Your {4} skins.\n "
+		"#format"		"{1:s},{2:.2f},{3:i},{4:t}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n \n--==| Your {4} skins.\n "
 	}
 
 	"InventoryMainMenu"
 	{
-		"#format"		"{1:s},{2:i},{3:i}"
-		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: {2} ✦\n    Skins: {3}\n \n--==| Your inventory\n "
+		"#format"		"{1:s},{2:.2f},{3:i}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n \n--==| Your inventory\n "
 	}
 
 	"MainMenuTitle"
 	{
-		"#format"		"{1:s},{2:i},{3:i}"
-		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: {2} ✦\n    Skins: {3}\n \n--==| Main Menu\n "
+		"#format"		"{1:s},{2:.2f},{3:i}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n \n--==| Main Menu\n "
 	}
 	
 	"OpenCases"
@@ -151,20 +174,20 @@
 	
 	"CasesTitle"
 	{
-		"#format"		"{1:s},{2:i},{3:i}"
-		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: {2} ✦\n    Skins: {3}\n \n--==| Open cases\n "
+		"#format"		"{1:s},{2:.2f},{3:i}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n \n--==| Open cases\n "
 	}
 	
 	"PreviewCasesTitle"
 	{
-		"#format"		"{1:s},{2:i},{3:i}"
-		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: {2} ✦\n    Skins: {3}\n \n--==| Possible drops from this case\n "
+		"#format"		"{1:s},{2:.2f},{3:i}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n \n--==| Possible drops from this case\n "
 	}
 	
 	"CasesItem"
 	{
-		"#format"		"{1:s},{2:i}"
-		"en"			"{1} | Price: [{2}]"
+		"#format"		"{1:s},{2:.2f}"
+		"en"			"{1} | Price: [${2}]"
 	}
 	
 	"PreviewModeOFF"

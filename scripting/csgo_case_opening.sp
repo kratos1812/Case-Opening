@@ -8,7 +8,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define PLUGIN_VERSION "1.0.3b"
+#define PLUGIN_VERSION "1.0.4b"
 
 // Custom files.
 #include "inc/globals.inc"
@@ -30,7 +30,7 @@ public Plugin myinfo =
 };
 
 public void OnPluginStart()
-{
+{ 	
 	RegAdminCmds("sm_cases_addcash;sm_cases_givecredits", Command_AddBalance, ADMFLAG_ROOT, "Gives or takes credits from players");
 	
 	RegConsoleCmds("sm_case;sm_cases;sm_cs", Command_Case, "Opens the main case opening menu");
@@ -49,19 +49,19 @@ public void OnPluginStart()
 	
 	CreateConVar("sm_cases_version", PLUGIN_VERSION, "Case Opening by kRatoss Version", FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
 	
-	g_hFloatPrice = CreateConVar("sm_cases_float_price", "200", "Price for setting a float for a weapon.", FCVAR_NOTIFY, true, 0.0);
+	g_hFloatPrice = CreateConVar("sm_cases_float_price", "200.0", "Price for setting a float for a weapon.", FCVAR_NOTIFY, true, 0.0);
 	g_hFloatPrice.AddChangeHook(OnConvarsChanged);
 	
-	g_hSeedPrice = CreateConVar("sm_cases_seed_price", "200", "Price for rolling a random seed(pattern) for a weapon.", FCVAR_NOTIFY, true, 0.0);
+	g_hSeedPrice = CreateConVar("sm_cases_seed_price", "200.0", "Price for rolling a random seed(pattern) for a weapon.", FCVAR_NOTIFY, true, 0.0);
 	g_hSeedPrice.AddChangeHook(OnConvarsChanged);
 	
-	g_hStatTrackPrice = CreateConVar("sm_cases_statrack_price", "500", "Price for toggling StatTrack for a weapon.", FCVAR_NOTIFY, true, 0.0);
+	g_hStatTrackPrice = CreateConVar("sm_cases_statrack_price", "500.0", "Price for toggling StatTrack for a weapon.", FCVAR_NOTIFY, true, 0.0);
 	g_hStatTrackPrice.AddChangeHook(OnConvarsChanged);
 	
-	g_hNameTagPrice = CreateConVar("sm_cases_nametag_price", "500", "Price for setting a nametag on a weapon.", FCVAR_NOTIFY, true, 0.0);
+	g_hNameTagPrice = CreateConVar("sm_cases_nametag_price", "500.0", "Price for setting a nametag on a weapon.", FCVAR_NOTIFY, true, 0.0);
 	g_hNameTagPrice.AddChangeHook(OnConvarsChanged);
 	
-	g_hKillReward = CreateConVar("sm_cases_kill_reward", "10", "How many credits does a player gets for a kill.", FCVAR_NOTIFY, true, 0.0);
+	g_hKillReward = CreateConVar("sm_cases_kill_reward", "10.0", "How many credits does a player gets for a kill.", FCVAR_NOTIFY, true, 0.0);
 	g_hKillReward.AddChangeHook(OnConvarsChanged);
 	
 	AutoExecConfig(true, "case_opening_kratoss");
@@ -108,17 +108,21 @@ public void OnClientPutInServer(int iClient)
 
 public void OnClientDisconnect(int iClient)
 {
-	ArrayList hTempArray;
-	for(int iIndex = 0; iIndex < sizeof(g_sWeaponClasses); iIndex++)
-	{
-		g_hInventory[iClient].GetValue(g_sWeaponClasses[iIndex], hTempArray);
-		delete hTempArray;
-	}
-	delete g_hInventory[iClient];
 	g_bPreviewMode[iClient] = false; 
 	g_bWaintingForFloat[iClient] = false;
 	g_bWaitingForName[iClient] = false;
 	strcopy(g_sTempWeapon[iClient], sizeof(g_sTempWeapon[]), "");
+	
+	if(g_hInventory[iClient])
+	{
+		ArrayList hTempArray;
+		for(int iIndex = 0; iIndex < sizeof(g_sWeaponClasses); iIndex++)
+		{
+			g_hInventory[iClient].GetValue(g_sWeaponClasses[iIndex], hTempArray);
+			delete hTempArray;
+		}
+		delete g_hInventory[iClient];		
+	}
 }
 
 public void OnClientPostAdminCheck(int iClient)
@@ -165,33 +169,33 @@ void OnConvarsChanged(ConVar hConVar, const char[] sOldValue, const char[] sNewV
 {
 	if(hConVar == g_hFloatPrice)
 	{
-		g_iFloatPrice = StringToInt(sNewValue);
+		g_fFloatPrice = StringToFloat(sNewValue);
 	}
 	else if(hConVar == g_hSeedPrice)
 	{
-		g_iSeedPrice = StringToInt(sNewValue);
+		g_fSeedPrice = StringToFloat(sNewValue);
 	}
 	else if(hConVar == g_hStatTrackPrice)
 	{
-		g_iStarTrackPrice = StringToInt(sNewValue);
+		g_fStarTrackPrice = StringToFloat(sNewValue);
 	}
 	else if(hConVar == g_hNameTagPrice)
 	{
-		g_iNameTagPrice = StringToInt(sNewValue);
+		g_fNameTagPrice = StringToFloat(sNewValue);
 	}
 	else if(hConVar == g_hKillReward)
 	{
-		g_iKillReward = StringToInt(sNewValue);
+		g_fKillReward = StringToFloat(sNewValue);
 	}
 }
 
 public void OnConfigsExecuted()
 {
-	g_iFloatPrice = g_hFloatPrice.IntValue;
-	g_iSeedPrice = g_hSeedPrice.IntValue;
-	g_iStarTrackPrice = g_hStatTrackPrice.IntValue;
-	g_iNameTagPrice = g_hNameTagPrice.IntValue;
-	g_iKillReward = g_hKillReward.IntValue;
+	g_fFloatPrice = g_hFloatPrice.FloatValue;
+	g_fSeedPrice = g_hSeedPrice.FloatValue;
+	g_fStarTrackPrice = g_hStatTrackPrice.FloatValue;
+	g_fNameTagPrice = g_hNameTagPrice.FloatValue;
+	g_fKillReward = g_hKillReward.FloatValue;
 }
 
 Action CommandListener_BlockWSCommand(int iClient, const char[] sCommand, int iArgc)
