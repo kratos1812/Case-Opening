@@ -3,10 +3,12 @@ ArrayList g_hCasesPrices;
 ArrayList g_hCasesReturns;
 ArrayList g_hCasesSkins;
 ArrayList g_hSkins;
+ArrayList g_hDropsSkins;
 
 bool g_bPreviewMode[MAXPLAYERS + 1];
 bool g_bWaintingForFloat[MAXPLAYERS + 1];
 bool g_bWaitingForName[MAXPLAYERS + 1];
+bool g_bDropsEnabled;
 
 char g_sTempWeapon[MAXPLAYERS + 1][32];
 
@@ -23,12 +25,15 @@ ConVar g_hSeedPrice;
 ConVar g_hStatTrackPrice;
 ConVar g_hNameTagPrice;
 ConVar g_hKillReward;
+ConVar g_hDrops;
+ConVar g_hDropsChance;
 
 float g_fFloatPrice;
 float g_fSeedPrice;
 float g_fStarTrackPrice;
 float g_fNameTagPrice;
 float g_fKillReward;
+float g_fDropsChance;
 
 enum struct enum_skin
 {
@@ -37,6 +42,7 @@ enum struct enum_skin
 	int iWeaponIndex; // THIS IS NOT THE DEF INDEX
 	int iSkinIndex;
 	int iRarity;
+	
 	float fPrice;
 }
 

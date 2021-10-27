@@ -8,7 +8,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define PLUGIN_VERSION "1.0.4b"
+#define PLUGIN_VERSION "1.0.5b"
 
 // Custom files.
 #include "inc/globals.inc"
@@ -63,6 +63,12 @@ public void OnPluginStart()
 	
 	g_hKillReward = CreateConVar("sm_cases_kill_reward", "10.0", "How many credits does a player gets for a kill.", FCVAR_NOTIFY, true, 0.0);
 	g_hKillReward.AddChangeHook(OnConvarsChanged);
+
+	g_hDrops = CreateConVar("sm_cases_drops_enabled", "1.0", "Enable match end drops?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_hDrops.AddChangeHook(OnConvarsChanged);
+	
+	g_hDropsChance = CreateConVar("sm_cases_drops_chance", "25.0", "Drop percentage for each player. 100 = Everyone gets a drop. ", FCVAR_NOTIFY, true, 1.0, true, 100.0);
+	g_hDropsChance.AddChangeHook(OnConvarsChanged);
 	
 	AutoExecConfig(true, "case_opening_kratoss");
 	
@@ -73,6 +79,7 @@ public void OnPluginStart()
 	Database.Connect(DB_OnConnect, "case_opening");
 	
 	HookEvent("player_death", Event_PlayerDeath);
+	HookEvent("cs_win_panel_match", Event_WinPanel);
 }
 
 public void OnMapStart()
@@ -80,6 +87,7 @@ public void OnMapStart()
 	LoadItems();
 	LoadCases();
 	CreateMenus();
+	LoadDrops();
 }
 
 public void OnMapEnd()
@@ -187,6 +195,14 @@ void OnConvarsChanged(ConVar hConVar, const char[] sOldValue, const char[] sNewV
 	{
 		g_fKillReward = StringToFloat(sNewValue);
 	}
+	else if(hConVar == g_hDrops)
+	{
+		g_bDropsEnabled = StringToInt(sNewValue) == 1;
+	}
+	else if(hConVar == g_hDropsChance)
+	{
+		g_fDropsChance = StringToFloat(sNewValue);
+	}
 }
 
 public void OnConfigsExecuted()
@@ -196,6 +212,8 @@ public void OnConfigsExecuted()
 	g_fStarTrackPrice = g_hStatTrackPrice.FloatValue;
 	g_fNameTagPrice = g_hNameTagPrice.FloatValue;
 	g_fKillReward = g_hKillReward.FloatValue;
+	g_fDropsChance = g_hDropsChance.FloatValue;
+	g_bDropsEnabled = g_hDrops.IntValue == 1;
 }
 
 Action CommandListener_BlockWSCommand(int iClient, const char[] sCommand, int iArgc)

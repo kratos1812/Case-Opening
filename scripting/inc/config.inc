@@ -139,7 +139,6 @@ void LoadCases()
 	
 	LogMessage("Loaded %i cases.", g_hCasesNames.Length);
 	delete hKeyValues;
-	// DebugCases();
 }
 
 void CreateMenus()
@@ -148,19 +147,6 @@ void CreateMenus()
 	g_hMarketMenu = new Menu(Market_Handler, MENU_ACTIONS_ALL);
 	g_hMarketMenu.ExitBackButton = true;
 	
-	/*enum_skin hItem;
-	char sKey[10], sItem[64];
-	
-	for(int iItemId = 0; iItemId < g_hSkins.Length; iItemId++)
-	{
-		g_hSkins.GetArray(iItemId, hItem);
-		
-		FormatEx(sKey, sizeof(sKey), "%i", iItemId);
-		FormatEx(sItem, sizeof(sItem), "%T", "SkinsMarketItem", LANG_SERVER, hItem.szName, hItem.fPrice);
-		
-		g_hMarketMenu.AddItem(sKey, sItem);
-	}*/
-	
 	char sItem[64];
 	
 	for(int iWeaponIndex = 0; iWeaponIndex < sizeof(g_sWeaponClasses); iWeaponIndex++)
@@ -168,4 +154,43 @@ void CreateMenus()
 		Format(sItem, sizeof(sItem), "%T", g_sWeaponClasses[iWeaponIndex], LANG_SERVER);
 		g_hMarketMenu.AddItem("", sItem);
 	}
+}
+
+void LoadDrops()
+{
+	char szConfigPath[PLATFORM_MAX_PATH];
+	BuildPath(Path_SM, szConfigPath, sizeof(szConfigPath), "configs/cases/drops.cfg"); // Build the config file path
+
+	KeyValues hKeyValues = new KeyValues("Drops");
+	if(hKeyValues.ImportFromFile(szConfigPath))
+	{
+		delete g_hDropsSkins;
+		g_hDropsSkins = new ArrayList(ByteCountToCells(64)); // Create a new list of skins data
+			
+		char szKey[12], szSkinData[64];
+		int nItems;
+		
+		do 
+		{
+			Format(szKey, sizeof(szKey), "%i", nItems++);
+			hKeyValues.GetString(szKey, szSkinData, sizeof(szSkinData), "no-skin"); // Get the skin data
+			
+			if(StrEqual(szSkinData, "no-skin"))
+			{
+				break;
+			}
+			else
+			{
+				g_hDropsSkins.PushString(szSkinData);
+			}
+		}
+		while (nItems > -1); // This would make an infinite loop, but we break it inside			
+	}
+	else
+	{
+		SetFailState("Failed to load the drops from \"%s\".", szConfigPath);
+	}
+	
+	LogMessage("Loaded %i drop skins.", g_hDropsSkins.Length);
+	delete hKeyValues;
 }
