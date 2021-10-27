@@ -31,9 +31,6 @@ void Event_WinPanel(Event hEvent, const char[] sName, bool bDontBroadcast)
 			{
 				if(GetRandomFloat(0.0, 100.0) <= g_fDropsChance)
 				{
-					hMessage = view_as<Protobuf>(StartMessageAll("SendPlayerItemDrops", USERMSG_RELIABLE));
-					hEntityUpdates = hMessage.AddMessage("entity_updates");
-					
 					GetRandomDrop(hRandomSkin, iSkinId);
 					
 					if(ClientHasSkin(iClient, iSkinId, hRandomSkin.iWeaponIndex)) // If client already has this skin
@@ -44,6 +41,9 @@ void Event_WinPanel(Event hEvent, const char[] sName, bool bDontBroadcast)
 							continue;
 						}
 					}
+					
+					hMessage = view_as<Protobuf>(StartMessageAll("SendPlayerItemDrops", USERMSG_RELIABLE));
+					hEntityUpdates = hMessage.AddMessage("entity_updates");
 					
 					hEntityUpdates.SetInt("accountid", GetSteamAccountID(iClient));
 					hEntityUpdates.SetInt64("itemid", iItemId);
