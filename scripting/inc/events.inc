@@ -23,6 +23,7 @@ void Event_WinPanel(Event hEvent, const char[] sName, bool bDontBroadcast)
 		
 		int iItemId[2] = { 444, 444 };
 		int iSkinId;
+		int iTries;
 		
 		for(int iClient = 1; iClient <= MaxClients; iClient++)
 		{
@@ -34,6 +35,15 @@ void Event_WinPanel(Event hEvent, const char[] sName, bool bDontBroadcast)
 					hEntityUpdates = hMessage.AddMessage("entity_updates");
 					
 					GetRandomDrop(hRandomSkin, iSkinId);
+					
+					if(ClientHasSkin(iClient, iSkinId, hRandomSkin.iWeaponIndex)) // If client already has this skin
+					{
+						if(iTries++ < 3)
+						{
+							iClient--;
+							continue;
+						}
+					}
 					
 					hEntityUpdates.SetInt("accountid", GetSteamAccountID(iClient));
 					hEntityUpdates.SetInt64("itemid", iItemId);

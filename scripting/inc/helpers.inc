@@ -127,7 +127,7 @@ stock bool IsKnife(const char[] sClassname)
 	return StrContains(sClassname, "knife", false) != -1 || StrContains(sClassname, "bayonet", false) != -1;
 }
 
-stock bool GetRandomDrop(enum_skin hSkin, int iSkinId)
+void GetRandomDrop(enum_skin hSkin, int &iSkinId)
 {
 	int iChances, iItemId;
 	char sSkinData[64], sData[Data_Max][10];
