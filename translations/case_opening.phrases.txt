@@ -1,5 +1,15 @@
 "Phrases"
 {
+	"See gloves"
+	{
+		"en"			"Your Gloves"
+	}
+	
+	"UnlockGloves"
+	{
+		"en"			"Buy Gloves"
+	}	
+
 	"NoSkins"
 	{
 		"en"			"You have no skins"
@@ -485,5 +495,40 @@
 	"weapon_knife"
 	{
 		"en"	"Knife"
+	}
+	
+	"Broken Fang Gloves"
+	{
+		"en"	"Broken Fang Gloves"
+	}
+	
+	"Bloodhound Gloves"
+	{
+		"en"	"Bloodhound Gloves"
+	}
+	
+	"Sport Gloves"
+	{
+		"en"	"Sport Gloves"
+	}
+	
+	"Hand Wraps"
+	{
+		"en"	"Hand Wraps"
+	}
+	
+	"Driver Gloves"
+	{
+		"en"	"Driver Gloves"
+	}
+	
+	"Specialist Gloves"
+	{
+		"en"	"Specialist Gloves"
+	}
+	
+	"Moto Gloves"
+	{
+		"en"	"Moto Gloves"
 	}
 }

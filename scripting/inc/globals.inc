@@ -4,11 +4,14 @@ ArrayList g_hCasesReturns;
 ArrayList g_hCasesSkins;
 ArrayList g_hSkins;
 ArrayList g_hDropsSkins;
+ArrayList g_hGloves;
 
 bool g_bPreviewMode[MAXPLAYERS + 1];
 bool g_bWaintingForFloat[MAXPLAYERS + 1];
 bool g_bWaitingForName[MAXPLAYERS + 1];
+bool g_bWaitingForFloatGloves[MAXPLAYERS + 1];
 bool g_bDropsEnabled;
+bool g_bOverrideCommands;
 
 char g_sTempWeapon[MAXPLAYERS + 1][32];
 
@@ -19,6 +22,7 @@ Cookie g_hBalance; // No need to use a different MySQL table just to store the b
 Database g_hDatabase;
 
 Menu g_hMarketMenu;
+Menu g_hGlovesMarketMenu;
 
 ConVar g_hFloatPrice;
 ConVar g_hSeedPrice;
@@ -27,6 +31,7 @@ ConVar g_hNameTagPrice;
 ConVar g_hKillReward;
 ConVar g_hDrops;
 ConVar g_hDropsChance;
+ConVar g_hCommandsOverride;
 
 float g_fFloatPrice;
 float g_fSeedPrice;
@@ -46,6 +51,41 @@ enum struct enum_skin
 	float fPrice;
 }
 
+enum struct enum_glove
+{
+	char sName[64];
+	char sType[64]; // Used as key for g_hInventory -> "Broken Fang", "Hydra", "Moto", etc... 
+	
+	int iIndex;
+	int iType;
+	int iDefIndex;
+	
+	float fPrice;
+}
+
+enum enItemType// Item types
+{
+	Type_WeaponSkin = 0,
+	Type_Gloves = 1,
+	Type_Agent = 2,
+	
+	Type_Max
+}
+
+enum // Gloves types
+{
+	Gloves_Moto = 0,
+	Gloves_Specialist = 1,
+	Gloves_Driver = 2,
+	Gloves_Wraps = 3,
+	Gloves_Sport = 4,
+	Gloves_Bloodhound = 5,
+	Gloves_Hydra = 6,
+	Gloves_BrokenFang = 7,
+	
+	Gloves_Max 
+}
+
 enum // Skin data enum, for a easier read of the code. 
 {
 	Data_Id = 0,
@@ -54,6 +94,20 @@ enum // Skin data enum, for a easier read of the code.
 	Data_Max
 }
 
+char g_sGlovesType[][] = 
+{
+	"Broken Fang Gloves",
+	"Hydra Gloves",
+	"Bloodhound Gloves",
+	"Sport Gloves",
+	"Hand Wraps",
+	"Driver Gloves",
+	"Specialist Gloves",
+	"Moto Gloves"
+};
+
+Menu g_hGloveMarketItemMenu[sizeof(g_sGlovesType)];
+
 char g_sMySQLTables[][] = // Might add more
 {
 	"\
@@ -61,7 +115,11 @@ char g_sMySQLTables[][] = // Might add more
 	    `uId` INT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,\
 	    `skinId` INT UNSIGNED NOT NULL,\
 	    `accountId` INT UNSIGNED NOT NULL\
-	)"
+	)",
+	
+	"\
+	ALTER TABLE\
+    `kratoss_case_opening` ADD COLUMN IF NOT EXISTS `type` INT UNSIGNED NOT NULL DEFAULT 0 AFTER `skinId`;"
 };
 
 int g_iWeaponDefIndex[] = {

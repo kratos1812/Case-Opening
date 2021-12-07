@@ -4,11 +4,12 @@
 #include <clientprefs>
 #include <multicolors>
 #include <weapons>
+#include <gloves>
 
 #pragma semicolon 1
 #pragma newdecls required
 
-#define PLUGIN_VERSION "1.0.5b"
+#define PLUGIN_VERSION "1.0.6b"
 
 // Custom files.
 #include "inc/globals.inc"
@@ -19,6 +20,7 @@
 #include "inc/open.inc"
 #include "inc/db.inc"
 #include "inc/events.inc"
+#include "inc/natives.inc"
 
 public Plugin myinfo = 
 {
@@ -28,6 +30,16 @@ public Plugin myinfo =
 	version = PLUGIN_VERSION,
 	url = "https://steamcommunity.com/id/kr4toss/"
 };
+
+public APLRes AskPluginLoad2(Handle hMyself, bool bLate, char[] sError, int iErrMax)
+{
+	RegPluginLibrary("case_opening");
+
+	CreateNative("Cases_GetClientBalance", Native_GetClientBalance);
+	CreateNative("Cases_SetClientBalance", Native_SetClientBalance);
+	
+	return APLRes_Success;
+}
 
 public void OnPluginStart()
 { 	
@@ -43,9 +55,8 @@ public void OnPluginStart()
 	AddCommandListener(CommandListener_BlockWSCommand, "sm_wslang");
 	AddCommandListener(CommandListener_BlockWSCommand, "sm_seed");
 	AddCommandListener(CommandListener_BlockWSCommand, "sm_knife");
-	AddCommandListener(CommandListener_BlockWSCommand, "sm_knife");
-	AddCommandListener(CommandListener_BlockWSCommand, "sm_knife");
-	AddCommandListener(CommandListener_BlockWSCommand, "sm_knife");
+	AddCommandListener(CommandListener_BlockWSCommand, "sm_glove");
+	AddCommandListener(CommandListener_BlockWSCommand, "sm_gloves");
 	
 	CreateConVar("sm_cases_version", PLUGIN_VERSION, "Case Opening by kRatoss Version", FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
 	
@@ -70,6 +81,9 @@ public void OnPluginStart()
 	g_hDropsChance = CreateConVar("sm_cases_drops_chance", "25.0", "Drop percentage for each player. 100 = Everyone gets a drop. ", FCVAR_NOTIFY, true, 1.0, true, 100.0);
 	g_hDropsChance.AddChangeHook(OnConvarsChanged);
 	
+	g_hCommandsOverride = CreateConVar("sm_cases_cmds_override", "1", "Open !cases menu when players use !ws, !knife, !glove, commands?", FCVAR_NOTIFY, true, 1.0, true, 100.0);
+	g_hCommandsOverride.AddChangeHook(OnConvarsChanged);
+	
 	AutoExecConfig(true, "case_opening_kratoss");
 	
 	g_hBalance = new Cookie("Case Opening Balance", "Stores the credits of the players", CookieAccess_Private);
@@ -88,6 +102,7 @@ public void OnMapStart()
 	LoadCases();
 	CreateMenus();
 	LoadDrops();
+	LoadGloves();
 }
 
 public void OnMapEnd()
@@ -103,6 +118,7 @@ public void OnMapEnd()
 	delete g_hCasesSkins;
 	delete g_hCasesReturns;
 	delete g_hSkins;
+	delete g_hGloves;
 }
 
 public void OnClientPutInServer(int iClient)
@@ -111,6 +127,7 @@ public void OnClientPutInServer(int iClient)
 	g_bPreviewMode[iClient] = false; // This should not be saved, it's useless to
 	g_bWaintingForFloat[iClient] = false;
 	g_bWaitingForName[iClient] = false;
+	g_bWaitingForFloatGloves[iClient] = false;
 	strcopy(g_sTempWeapon[iClient], sizeof(g_sTempWeapon[]), "");
 }
 
@@ -119,6 +136,7 @@ public void OnClientDisconnect(int iClient)
 	g_bPreviewMode[iClient] = false; 
 	g_bWaintingForFloat[iClient] = false;
 	g_bWaitingForName[iClient] = false;
+	g_bWaitingForFloatGloves[iClient] = false;
 	strcopy(g_sTempWeapon[iClient], sizeof(g_sTempWeapon[]), "");
 	
 	if(g_hInventory[iClient])
@@ -170,6 +188,24 @@ public void OnClientSayCommand_Post(int iClient, const char[] sCommand, const ch
 				strcopy(g_sTempWeapon[iClient], sizeof(g_sTempWeapon[]), "");
 			}
 		}
+		else if(g_bWaitingForFloatGloves[iClient])
+		{
+			float fWear;
+			if(!sArgs[0] || StringToFloatEx(sArgs, fWear) != strlen(sArgs))
+			{
+				CPrintToChat(iClient, "%T", "InvalidAmount", iClient);
+			}
+			else
+			{
+				enum_glove hGloves;
+				g_bWaitingForFloatGloves[iClient] = false;
+				fWear = StringToFloat(sArgs);
+				int iGlove = StringToInt(g_sTempWeapon[iClient]);
+				g_hGloves.GetArray(iGlove, hGloves);
+				strcopy(g_sTempWeapon[iClient], sizeof(g_sTempWeapon[]), "");
+				Gloves_SetClientFloat(iClient, fWear);
+			}
+		}
 	}
 }
 
@@ -203,6 +239,10 @@ void OnConvarsChanged(ConVar hConVar, const char[] sOldValue, const char[] sNewV
 	{
 		g_fDropsChance = StringToFloat(sNewValue);
 	}
+	else if(hConVar == g_hCommandsOverride)
+	{
+		g_bOverrideCommands = StringToInt(sNewValue) == 1;
+	}
 }
 
 public void OnConfigsExecuted()
@@ -218,5 +258,10 @@ public void OnConfigsExecuted()
 
 Action CommandListener_BlockWSCommand(int iClient, const char[] sCommand, int iArgc)
 {
+	if(g_bOverrideCommands)
+	{
+		ShowMainMenu(iClient);
+	}
+	
 	return Plugin_Stop;
 }

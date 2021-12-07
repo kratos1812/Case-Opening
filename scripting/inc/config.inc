@@ -154,6 +154,16 @@ void CreateMenus()
 		Format(sItem, sizeof(sItem), "%T", g_sWeaponClasses[iWeaponIndex], LANG_SERVER);
 		g_hMarketMenu.AddItem("", sItem);
 	}
+	
+	delete g_hGlovesMarketMenu;
+	g_hGlovesMarketMenu = new Menu(GlovesMarket_Handler);
+	g_hGlovesMarketMenu.ExitBackButton = true;
+	
+	for(int iGloveType = 0; iGloveType < sizeof(g_sGlovesType); iGloveType++)
+	{
+		Format(sItem, sizeof(sItem), "%T", g_sGlovesType[iGloveType], LANG_SERVER);
+		g_hGlovesMarketMenu.AddItem("", sItem);
+	}
 }
 
 void LoadDrops()
@@ -193,4 +203,86 @@ void LoadDrops()
 	
 	LogMessage("Loaded %i drop skins.", g_hDropsSkins.Length);
 	delete hKeyValues;
+}
+
+void LoadGloves()
+{
+	char szConfigPath[PLATFORM_MAX_PATH];
+	BuildPath(Path_SM, szConfigPath, sizeof(szConfigPath), "configs/cases/gloves.cfg"); // Build the config file path
+	
+	KeyValues hKeyValues = new KeyValues("Gloves");
+	if(hKeyValues.ImportFromFile(szConfigPath))
+	{
+		if(hKeyValues.GotoFirstSubKey()) // Go to the gloves type
+		{
+			enum_glove hGloves;
+			
+			char sGloveName[64], sGloveType[64], sSkinId[128];
+			
+			float fPrice;
+			
+			int iIndex;
+			int iDefIndex;
+			
+			g_hGloves = new ArrayList(sizeof(enum_glove));
+			
+			for(int iType = 0; iType < sizeof(g_sGlovesType); iType++)
+			{
+				delete g_hGloveMarketItemMenu[iType];
+				g_hGloveMarketItemMenu[iType] = new Menu(MarketGlovesItem_Handler, MENU_ACTIONS_ALL);
+				g_hGloveMarketItemMenu[iType].ExitBackButton = true;
+			}
+			
+			do
+			{
+				hKeyValues.GetString("name", sGloveName, sizeof(sGloveName));
+				hKeyValues.GetString("type", sGloveType, sizeof(sGloveType));
+				
+				fPrice = hKeyValues.GetFloat("price_market");
+				
+				iIndex = hKeyValues.GetNum("index");
+				iDefIndex =  hKeyValues.GetNum("defindex");
+				
+				strcopy(hGloves.sName, sizeof(enum_glove::sName), sGloveName);
+				strcopy(hGloves.sType, sizeof(enum_glove::sType), sGloveType);
+				
+				hGloves.fPrice = fPrice;
+				
+				hGloves.iIndex = iIndex;
+				hGloves.iType = GetGloveTypeNum(sGloveType);
+				hGloves.iDefIndex = iDefIndex;
+				
+				if(hGloves.iType == -1)
+				{
+					LogError("\"%s\" has a invalid type", sGloveName);
+				}
+				
+				g_hGloves.PushArray(hGloves);
+				
+				if(hGloves.fPrice > 0.0)
+				{
+					Format(sGloveName, sizeof(sGloveName), "%T", "BuySkinItem", LANG_SERVER, sGloveName, hGloves.fPrice);
+				}
+				else
+				{
+					Format(sGloveName, sizeof(sGloveName), "%T", "BuySkinItem_NoPrice", LANG_SERVER, sGloveName);
+				}
+				
+				hKeyValues.GetSectionName(sSkinId, sizeof(sSkinId));
+				g_hGloveMarketItemMenu[hGloves.iType].AddItem(sSkinId, sGloveName);
+			}
+			while (hKeyValues.GotoNextKey());
+		}
+		
+		for(int iGloveType = 0; iGloveType < sizeof(g_sGlovesType); iGloveType++)
+		{
+			if(g_hGloveMarketItemMenu[iGloveType].ItemCount == 0)
+			{
+				if(g_hGlovesMarketMenu.RemoveItem(iGloveType))
+				{
+					iGloveType--;
+				}
+			}
+		}
+	}
 }

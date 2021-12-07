@@ -37,6 +37,7 @@ void Event_WinPanel(Event hEvent, const char[] sName, bool bDontBroadcast)
 					{
 						if(iTries++ < 3)
 						{
+							iTries = 0;
 							iClient--;
 							continue;
 						}

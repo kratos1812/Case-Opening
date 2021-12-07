@@ -117,6 +117,17 @@ bool ClientHasSkin(int iClient, int iItemId, int iIndex)
 	return false;
 }
 
+bool ClientHasGlove(int iClient, int iItemId, int iType)
+{
+	ArrayList hArray;
+	g_hInventory[iClient].GetValue(g_sGlovesType[iType], hArray);
+	if(hArray.FindValue(iItemId) != -1)
+	{
+		return true;
+	}
+	return false;
+}
+
 stock int RarityIntToString(int iRarity, int iMaxLen, char[] sOutput)
 {
 	return Format(sOutput, iMaxLen, g_sItemRarity[iRarity][1]);
@@ -162,4 +173,44 @@ void GetRandomDrop(enum_skin hSkin, int &iSkinId)
 	g_hSkins.GetArray(iItemId, hSkin); // Get the skin
 	
 	iSkinId = iItemId;
+}
+
+int GetGloveTypeNum(const char[] sType)
+{
+	for(int iType = 0; iType < sizeof(g_sGlovesType); iType++)
+	{
+		if(StrEqual(g_sGlovesType[iType], sType))
+		{
+			return iType;
+		}
+	}
+	
+	return -1;
+}
+
+int GetTotalGlovesCount(int iClient)
+{
+	int iTotal;
+	ArrayList hGloves;
+	
+	for(int iIndex = 0; iIndex < sizeof(g_sGlovesType); iIndex++)
+	{
+		if(g_hInventory[iClient].GetValue(g_sGlovesType[iIndex], hGloves))
+		{
+			iTotal += hGloves.Length;
+		}
+	}
+
+	return iTotal;
+}
+
+int GetGlovesCount(int iClient, int iType)
+{
+	ArrayList hGloves;
+	if(g_hInventory[iClient].GetValue(g_sGlovesType[iType], hGloves))
+	{
+		return hGloves.Length;
+	}
+	
+	return 0;
 }

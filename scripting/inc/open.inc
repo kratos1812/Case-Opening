@@ -70,3 +70,11 @@ void AddSkinToInventory(int iClient, int iItemId, int iIndex)
 	hArray.Push(iItemId);
 	hArray = null;
 }
+
+void AddGloveToInventory(int iClient, int iItemId, int iType)
+{
+	ArrayList hArray;
+	g_hInventory[iClient].GetValue(g_sGlovesType[iType], hArray);
+	hArray.Push(iItemId);
+	hArray = null;
+}
