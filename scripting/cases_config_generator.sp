@@ -239,8 +239,8 @@ void LoadGloves()
 					m_sKeyValues.SetString("name", m_sGloveSkinName);
 					m_sKeyValues.SetString("type", m_sGloveType);
 					
-					m_sKeyValues.SetNum("index", eItems_GetGlovesDefIndexByGlovesNum(m_iGloveNum));
-					m_sKeyValues.SetNum("defindex", eItems_GetSkinDefIndexBySkinNum(m_iPaintNum));
+					m_sKeyValues.SetNum("defindex", eItems_GetGlovesDefIndexByGlovesNum(m_iGloveNum));
+					m_sKeyValues.SetNum("index", eItems_GetSkinDefIndexBySkinNum(m_iPaintNum));
 					m_sKeyValues.SetFloat("price_market", 0.0);
 					
 					m_sKeyValues.GoBack();
