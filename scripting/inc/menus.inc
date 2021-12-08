@@ -713,7 +713,7 @@ int GlovesList_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 			Format(sInfo, sizeof(sInfo), "%i", iGlove);
 			
 			Menu hGloveMenu = new Menu(GloveMenu_Handler, MENU_ACTIONS_ALL);
-			hGloveMenu.SetTitle("%T", "ConfigureGlove", iClient, PLUGIN_VERSION, GetBalance(iClient), GetTotalSkinsCount(iClient), hGlove.sType, hGlove.sName); 
+			hGloveMenu.SetTitle("%T", "ConfigureGlove", iClient, PLUGIN_VERSION, GetBalance(iClient), GetTotalSkinsCount(iClient), GetTotalGlovesCount(iClient), hGlove.sType, hGlove.sName); 
 			hGloveMenu.ExitBackButton = true;
 			
 			Format(sItem, sizeof(sItem), "%T", "EquiptT", iClient, hGlove.sName);
@@ -835,7 +835,7 @@ int GloveMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 				
 			if(iParam2 != 3)
 			{
-				hMenu.SetTitle("%T", "ConfigureGlove", iClient, PLUGIN_VERSION, GetBalance(iClient), GetTotalSkinsCount(iClient), hGlove.sType, hGlove.sName); 
+				hMenu.SetTitle("%T", "ConfigureGlove", iClient, PLUGIN_VERSION, GetBalance(iClient), GetTotalSkinsCount(iClient), GetTotalGlovesCount(iClient), hGlove.sType, hGlove.sName); 
 				hMenu.Display(iClient, MENU_TIME_FOREVER);
 			}
 		}

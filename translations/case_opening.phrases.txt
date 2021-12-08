@@ -115,6 +115,12 @@
 		"#format"		"{1:.2f}"
 		"en"			"Set a float | Price: [${1}] | (For this weapon)"
 	}
+	
+	"SetFloatGloves"
+	{
+		"#format"		"{1:.2f}"
+		"en"			"Set a float | Price: [${1}] | (For all gloves)"
+	}
 
 	"Equipt"
 	{
@@ -152,16 +158,16 @@
 		"en"			"[{lime}CASES{default}] You opened {1}{2}{default}, but you already have this skin. You got{green} ${3}{default} credits back."
 	}
 	
+	"ConfigureGlove"
+	{
+		"#format"		"{1:s},{2:.2f},{3:i},{4:i},{5:t},{6:s}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n     Gloves: {5}\n \n--==| Configure {5} | {6}.\n "
+	}
+	
 	"ConfigureSkin"
 	{
 		"#format"		"{1:s},{2:.2f},{3:i},{4:t},{5:i}"
 		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n     Gloves: {5}\n \n--==| Configure this {4} skin.\n "
-	}
-
-	"GlovesMenu"
-	{
-		"#format"		"{1:s},{2:.2f},{3:i},{4:t},{5:i}"
-		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n    Gloves: {5}\n \n--==| Your {4} skins.\n "
 	}
 
 	"SkinsMenu"
