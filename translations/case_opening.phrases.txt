@@ -10,6 +10,16 @@
 		"en"			"Remove gloves for T"
 	}
 	
+	"EquiptT"
+	{
+		"en"			"Equipt for T"
+	}
+	
+	"EquiptCT"
+	{
+		"en"			"Equipt for CT"
+	}
+	
 	"UnEquiptCT"
 	{
 		"en"			"Remove gloves for CT"
@@ -161,13 +171,19 @@
 	"ConfigureGlove"
 	{
 		"#format"		"{1:s},{2:.2f},{3:i},{4:i},{5:t},{6:s}"
-		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n     Gloves: {5}\n \n--==| Configure {5} | {6}.\n "
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n    Gloves: {4}\n \n--==| Configure {5} | {6}.\n "
 	}
 	
 	"ConfigureSkin"
 	{
 		"#format"		"{1:s},{2:.2f},{3:i},{4:t},{5:i}"
-		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n     Gloves: {5}\n \n--==| Configure this {4} skin.\n "
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n    Gloves: {5}\n \n--==| Configure this {4} skin.\n "
+	}
+	
+	"GlovesMenu"
+	{
+		"#format"		"{1:s},{2:.2f},{3:i},{4:t},{5:i}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n    Gloves: {5}\n \n--==| Your {4}.\n "
 	}
 
 	"SkinsMenu"
