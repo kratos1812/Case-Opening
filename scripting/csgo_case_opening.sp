@@ -81,8 +81,14 @@ public void OnPluginStart()
 	g_hDropsChance = CreateConVar("sm_cases_drops_chance", "25.0", "Drop percentage for each player. 100 = Everyone gets a drop. ", FCVAR_NOTIFY, true, 1.0, true, 100.0);
 	g_hDropsChance.AddChangeHook(OnConvarsChanged);
 	
-	g_hCommandsOverride = CreateConVar("sm_cases_cmds_override", "1", "Open !cases menu when players use !ws, !knife, !glove, commands?", FCVAR_NOTIFY, true, 1.0, true, 100.0);
+	g_hCommandsOverride = CreateConVar("sm_cases_cmds_override", "1", "Open !cases menu when players use !ws, !knife, !glove, commands?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_hCommandsOverride.AddChangeHook(OnConvarsChanged);
+	
+	g_hEnableMarketSkins = CreateConVar("sm_cases_allow_buy_skins", "1", "Allow players to buy skins?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_hEnableMarketSkins.AddChangeHook(OnConvarsChanged);
+	
+	g_hEnableMarketGloves = CreateConVar("sm_cases_allow_buy_gloves", "1", "Allow players to quick sell skins and gloves?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_hEnableMarketGloves.AddChangeHook(OnConvarsChanged);
 	
 	AutoExecConfig(true, "case_opening_kratoss");
 	
@@ -243,6 +249,18 @@ void OnConvarsChanged(ConVar hConVar, const char[] sOldValue, const char[] sNewV
 	{
 		g_bOverrideCommands = StringToInt(sNewValue) == 1;
 	}
+	else if(hConVar == g_hEnableMarketSkins)
+	{
+		g_bEnableMarketSkins = StringToInt(sNewValue) == 1;
+	}
+	else if(hConVar == g_hEnableMarketGloves)
+	{
+		g_bEnableMarketGloves = StringToInt(sNewValue) == 1;
+	}
+	else if(hConVar == g_hEnableQuickSell)
+	{
+		g_bEnableQuickSell = StringToInt(sNewValue) == 1;
+	}
 }
 
 public void OnConfigsExecuted()
@@ -253,7 +271,10 @@ public void OnConfigsExecuted()
 	g_fNameTagPrice = g_hNameTagPrice.FloatValue;
 	g_fKillReward = g_hKillReward.FloatValue;
 	g_fDropsChance = g_hDropsChance.FloatValue;
-	g_bDropsEnabled = g_hDrops.IntValue == 1;
+	g_bDropsEnabled = g_hDrops.BoolValue;
+	g_bEnableMarketSkins = g_hEnableMarketSkins.BoolValue;
+	g_bEnableMarketGloves = g_hEnableMarketGloves.BoolValue;
+	g_bEnableQuickSell = g_hEnableQuickSell.BoolValue;
 }
 
 Action CommandListener_BlockWSCommand(int iClient, const char[] sCommand, int iArgc)

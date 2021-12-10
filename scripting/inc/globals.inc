@@ -12,6 +12,9 @@ bool g_bWaitingForName[MAXPLAYERS + 1];
 bool g_bWaitingForFloatGloves[MAXPLAYERS + 1];
 bool g_bDropsEnabled;
 bool g_bOverrideCommands;
+bool g_bEnableMarketSkins;
+bool g_bEnableMarketGloves;
+bool g_bEnableQuickSell;
 
 char g_sTempWeapon[MAXPLAYERS + 1][32];
 
@@ -32,6 +35,9 @@ ConVar g_hKillReward;
 ConVar g_hDrops;
 ConVar g_hDropsChance;
 ConVar g_hCommandsOverride;
+ConVar g_hEnableMarketSkins;
+ConVar g_hEnableMarketGloves;
+ConVar g_hEnableQuickSell;
 
 float g_fFloatPrice;
 float g_fSeedPrice;

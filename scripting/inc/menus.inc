@@ -11,11 +11,17 @@ void ShowMainMenu(int iClient)
 	FormatEx(sBuffer, sizeof(sBuffer), "%T", "Inventory", iClient);
 	hMenu.AddItem("inventory", sBuffer);
 	
-	FormatEx(sBuffer, sizeof(sBuffer), "%T", "UnlockSkins", iClient);
-	hMenu.AddItem("unlockskins", sBuffer);
-	
-	FormatEx(sBuffer, sizeof(sBuffer), "%T", "UnlockGloves", iClient);
-	hMenu.AddItem("unlockgloves", sBuffer);
+	if(g_bEnableMarketSkins)
+	{
+		FormatEx(sBuffer, sizeof(sBuffer), "%T", "UnlockSkins", iClient);
+		hMenu.AddItem("unlockskins", sBuffer);
+	}
+
+	if(g_bEnableMarketGloves)
+	{
+		FormatEx(sBuffer, sizeof(sBuffer), "%T", "UnlockGloves", iClient);
+		hMenu.AddItem("unlockgloves", sBuffer);		
+	}
 
 	hMenu.Display(iClient, MENU_TIME_FOREVER);
 }
@@ -273,16 +279,20 @@ int SkinsMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 				enum_skin hSkin;
 				g_hSkins.GetArray(iSkinId, hSkin);
 				
-				if(hSkin.fPrice != 0.0)
+				if(g_hEnableQuickSell)
 				{
-					Format(sItem, sizeof(sItem), "%T", "QuickSell", iClient, hSkin.fPrice);
-					hSkinsMenu.AddItem(sKey, sItem);
+					if(hSkin.fPrice != 0.0)
+					{
+						Format(sItem, sizeof(sItem), "%T", "QuickSell", iClient, hSkin.fPrice);
+						hSkinsMenu.AddItem(sKey, sItem);
+					}
+					else
+					{
+						Format(sItem, sizeof(sItem), "%T", "QuickSell_NoPrice", iClient);
+						hSkinsMenu.AddItem(sKey, sItem, ITEMDRAW_DISABLED);
+					}					
 				}
-				else
-				{
-					Format(sItem, sizeof(sItem), "%T", "QuickSell_NoPrice", iClient);
-					hSkinsMenu.AddItem(sKey, sItem, ITEMDRAW_DISABLED);
-				}
+
 				
 				hSkinsMenu.Display(iClient, MENU_TIME_FOREVER);				
 			}
@@ -725,15 +735,18 @@ int GlovesList_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 			Format(sItem, sizeof(sItem), "%T", "SetFloatGloves", iClient, g_fFloatPrice);
 			hGloveMenu.AddItem(sInfo, sItem, fBalance < g_fFloatPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
 			
-			if(hGlove.fPrice != 0.0)
+			if(g_bEnableQuickSell)
 			{
-				Format(sItem, sizeof(sItem), "%T", "QuickSell", iClient, hGlove.fPrice);
-				hGloveMenu.AddItem(sInfo, sItem);
-			}
-			else
-			{
-				Format(sItem, sizeof(sItem), "%T", "QuickSell_NoPrice", iClient);
-				hGloveMenu.AddItem(sInfo, sItem, ITEMDRAW_DISABLED);
+				if(hGlove.fPrice != 0.0)
+				{
+					Format(sItem, sizeof(sItem), "%T", "QuickSell", iClient, hGlove.fPrice);
+					hGloveMenu.AddItem(sInfo, sItem);
+				}
+				else
+				{
+					Format(sItem, sizeof(sItem), "%T", "QuickSell_NoPrice", iClient);
+					hGloveMenu.AddItem(sInfo, sItem, ITEMDRAW_DISABLED);
+				}				
 			}
 			
 			hGloveMenu.Display(iClient, MENU_TIME_FOREVER);
