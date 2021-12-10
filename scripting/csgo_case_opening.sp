@@ -87,8 +87,11 @@ public void OnPluginStart()
 	g_hEnableMarketSkins = CreateConVar("sm_cases_allow_buy_skins", "1", "Allow players to buy skins?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_hEnableMarketSkins.AddChangeHook(OnConvarsChanged);
 	
-	g_hEnableMarketGloves = CreateConVar("sm_cases_allow_buy_gloves", "1", "Allow players to quick sell skins and gloves?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_hEnableMarketGloves = CreateConVar("sm_cases_allow_buy_gloves", "1", "Allow players to buy gloves?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_hEnableMarketGloves.AddChangeHook(OnConvarsChanged);
+	
+	g_hEnableQuickSell  = CreateConVar("sm_cases_allow_quick_sell", "1", "Allow players to quick sell skins and gloves?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_hEnableQuickSell.AddChangeHook(OnConvarsChanged);
 	
 	AutoExecConfig(true, "case_opening_kratoss");
 	
