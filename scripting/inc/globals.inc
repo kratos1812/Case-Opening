@@ -15,6 +15,8 @@ bool g_bOverrideCommands;
 bool g_bEnableMarketSkins;
 bool g_bEnableMarketGloves;
 bool g_bEnableQuickSell;
+bool g_bStoreExists;
+bool g_bShopExists;
 
 char g_sTempWeapon[MAXPLAYERS + 1][32];
 
@@ -38,6 +40,7 @@ ConVar g_hCommandsOverride;
 ConVar g_hEnableMarketSkins;
 ConVar g_hEnableMarketGloves;
 ConVar g_hEnableQuickSell;
+ConVar g_hBalanceMode;
 
 float g_fFloatPrice;
 float g_fSeedPrice;
@@ -45,6 +48,17 @@ float g_fStarTrackPrice;
 float g_fNameTagPrice;
 float g_fKillReward;
 float g_fDropsChance;
+
+int g_iBalanceMode;
+
+enum 
+{
+	Balance_Default = 0,
+	Balance_Shop = 1,
+	Balance_Store = 2,
+	
+	Balance_Max
+}
 
 enum struct enum_skin
 {

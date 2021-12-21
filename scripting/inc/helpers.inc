@@ -38,29 +38,63 @@ stock void AddSkinToMenu(Menu hMenu, const char[] sSkinData)
 
 stock float GetBalance(int iClient)
 {
-	if(AreClientCookiesCached(iClient))
+	switch(g_iBalanceMode)
 	{
-		char sBalance[32];
-		g_hBalance.Get(iClient, sBalance, sizeof(sBalance));
-		
-		if(!sBalance[0])
+		case Balance_Default:
 		{
-			return 0.0;
+			if(AreClientCookiesCached(iClient))
+			{
+				char sBalance[32];
+				g_hBalance.Get(iClient, sBalance, sizeof(sBalance));
+				
+				if(!sBalance[0])
+				{
+					return 0.0;
+				}
+				return StringToFloat(sBalance);
+			}
+			else
+			{
+				LogMessage("Couldn't get balance for %L", iClient);
+				return -1.0;
+			}			
 		}
-		return StringToFloat(sBalance);
+		
+		case Balance_Shop:
+		{
+			return float(Shop_GetClientCredits(iClient));
+		}
+		
+		case Balance_Store:
+		{
+			return float(Store_GetClientCredits(iClient));
+		}
 	}
-	else
-	{
-		LogMessage("Couldn't get balance for %L", iClient);
-		return -1.0;
-	}
+	
+	return 0.0;
 }
 
 stock void SetBalance(int iClient, float fAmount) // It can be negative as well, doesnt really matter
 {
-	char sBalance[32];
-	Format(sBalance, sizeof(sBalance), "%f", fAmount);// PrintToChatAll("sBalance = %f, fAmount = %f", sBalance, fAmount);
-	g_hBalance.Set(iClient, sBalance);		
+	switch(g_iBalanceMode)
+	{
+		case Balance_Default:
+		{
+			char sBalance[32];
+			Format(sBalance, sizeof(sBalance), "%f", fAmount);
+			g_hBalance.Set(iClient, sBalance);
+		}
+		
+		case Balance_Shop:
+		{
+			Shop_SetClientCredits(iClient, RoundToCeil(fAmount));
+		}
+		
+		case Balance_Store:
+		{
+			Store_SetClientCredits(iClient, RoundToCeil(fAmount));
+		}
+	}
 }
 
 stock int IndexByDefIndex(int iDefIndex)
@@ -213,4 +247,18 @@ int GetGlovesCount(int iClient, int iType)
 	}
 	
 	return 0;
+}
+
+void CheckBalances()
+{
+	if(g_iBalanceMode == Balance_Store && !g_bStoreExists)
+	{
+		LogError("\"sm_cases_balance_mode\" is set to use \"Store by Zephyrus\" balance but it failed. Make sure that the plugin is loaded. Setting the convar to \"0\"(Default)");
+		g_hBalanceMode.IntValue = 0;
+	}
+	else if(g_iBalanceMode == Balance_Shop && !g_bShopExists)
+	{
+		LogError("\"sm_cases_balance_mode\" is set to use \"Shop Core\" balance but it failed. Make sure that the plugin is loaded. Setting the convar to \"0\"(Default)");
+		g_hBalanceMode.IntValue = 0;
+	}
 }

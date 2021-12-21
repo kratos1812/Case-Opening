@@ -6,10 +6,15 @@
 #include <weapons>
 #include <gloves>
 
+#undef REQUIRE_PLUGIN
+#tryinclude <shop>
+#tryinclude <store>
+#define REQUIRE_PLUGIN
+
 #pragma semicolon 1
 #pragma newdecls required
 
-#define PLUGIN_VERSION "1.0.7b"
+#define PLUGIN_VERSION "1.0.8b (Last Update: " ... __DATE__ ... ")"
 
 // Custom files.
 #include "inc/globals.inc"
@@ -33,6 +38,12 @@ public Plugin myinfo =
 
 public APLRes AskPluginLoad2(Handle hMyself, bool bLate, char[] sError, int iErrMax)
 {
+	MarkNativeAsOptional("Shop_GetClientCredits");
+	MarkNativeAsOptional("Shop_GiveClientCredits");
+	
+	MarkNativeAsOptional("Store_GetClientCredits");
+	MarkNativeAsOptional("Store_SetClientCredits");
+	
 	RegPluginLibrary("case_opening");
 
 	CreateNative("Cases_GetClientBalance", Native_GetClientBalance);
@@ -92,6 +103,9 @@ public void OnPluginStart()
 	
 	g_hEnableQuickSell  = CreateConVar("sm_cases_allow_quick_sell", "1", "Allow players to quick sell skins and gloves?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_hEnableQuickSell.AddChangeHook(OnConvarsChanged);
+	
+	g_hBalanceMode = CreateConVar("sm_cases_balance_mode", "0", "Balance mode. 0 = Plugin's custom balance. 1 = Shop Core balance. 2 = Store by Zephyrus balance.", FCVAR_NOTIFY, true, 0.0, true, 2.0);
+	g_hBalanceMode.AddChangeHook(OnConvarsChanged);
 	
 	AutoExecConfig(true, "case_opening_kratoss");
 	
@@ -264,6 +278,12 @@ void OnConvarsChanged(ConVar hConVar, const char[] sOldValue, const char[] sNewV
 	{
 		g_bEnableQuickSell = StringToInt(sNewValue) == 1;
 	}
+	else if(hConVar == g_hBalanceMode)
+	{
+		g_iBalanceMode = StringToInt(sNewValue);
+	}
+	
+	CheckBalances();
 }
 
 public void OnConfigsExecuted()
@@ -278,6 +298,9 @@ public void OnConfigsExecuted()
 	g_bEnableMarketSkins = g_hEnableMarketSkins.BoolValue;
 	g_bEnableMarketGloves = g_hEnableMarketGloves.BoolValue;
 	g_bEnableQuickSell = g_hEnableQuickSell.BoolValue;
+	g_iBalanceMode = g_hBalanceMode.IntValue;
+	
+	CheckBalances();
 }
 
 Action CommandListener_BlockWSCommand(int iClient, const char[] sCommand, int iArgc)
@@ -288,4 +311,36 @@ Action CommandListener_BlockWSCommand(int iClient, const char[] sCommand, int iA
 	}
 	
 	return Plugin_Stop;
+}
+
+public void OnAllPluginsLoaded()
+{
+	g_bStoreExists = LibraryExists("store_zephyrus");
+	g_bShopExists = LibraryExists("shop");
+}
+
+public void OnLibraryAdded(const char[] sLibrary)
+{
+	if (StrEqual(sLibrary, "store_zephyrus"))
+	{
+		g_bStoreExists = true;
+	}
+	
+	else if(StrEqual(sLibrary, "shop"))
+	{
+		g_bShopExists = true;
+	}
+}
+
+public void OnLibraryRemoved(const char[] sLibrary)
+{
+	if (StrEqual(sLibrary, "store_zephyrus"))
+	{
+		g_bStoreExists = false;
+	}
+	
+	else if(StrEqual(sLibrary, "shop"))
+	{
+		g_bShopExists = false;
+	}
 }

@@ -279,7 +279,7 @@ int SkinsMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 				enum_skin hSkin;
 				g_hSkins.GetArray(iSkinId, hSkin);
 				
-				if(g_hEnableQuickSell)
+				if(g_bEnableQuickSell)
 				{
 					if(hSkin.fPrice != 0.0)
 					{
@@ -293,7 +293,6 @@ int SkinsMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 					}					
 				}
 
-				
 				hSkinsMenu.Display(iClient, MENU_TIME_FOREVER);				
 			}
 			else
