@@ -207,6 +207,7 @@ void GetRandomDrop(enum_skin hSkin, int &iSkinId)
 	g_hSkins.GetArray(iItemId, hSkin); // Get the skin
 	
 	iSkinId = iItemId;
+	delete hSkinsChances;
 }
 
 int GetGloveTypeNum(const char[] sType)

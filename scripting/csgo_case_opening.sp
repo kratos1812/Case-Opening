@@ -14,7 +14,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define PLUGIN_VERSION "1.0.8b (Last Update: " ... __DATE__ ... ")"
+#define PLUGIN_VERSION "1.0.9b"
 
 // Custom files.
 #include "inc/globals.inc"
@@ -142,6 +142,7 @@ public void OnMapEnd()
 	delete g_hCasesReturns;
 	delete g_hSkins;
 	delete g_hGloves;
+	delete g_hDropsSkins;
 }
 
 public void OnClientPutInServer(int iClient)
@@ -170,7 +171,12 @@ public void OnClientDisconnect(int iClient)
 			g_hInventory[iClient].GetValue(g_sWeaponClasses[iIndex], hTempArray);
 			delete hTempArray;
 		}
-		delete g_hInventory[iClient];		
+		for(int iType = 0; iType < sizeof(g_sGlovesType); iType++)
+		{
+			g_hInventory[iClient].GetValue(g_sGlovesType[iType], hTempArray); 
+			delete hTempArray;
+		}
+		delete g_hInventory[iClient];
 	}
 }
 
