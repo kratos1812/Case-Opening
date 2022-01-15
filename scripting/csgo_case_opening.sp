@@ -14,7 +14,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define PLUGIN_VERSION "1.0.9b"
+#define PLUGIN_VERSION "1.1.0b"
 
 // Custom files.
 #include "inc/globals.inc"
