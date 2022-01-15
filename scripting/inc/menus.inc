@@ -56,7 +56,7 @@ int MainMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 	}
 }
 
-void ShowCasesMenu(int iClient)
+void ShowCasesMenu(int iClient, int iPos = 0)
 {
 	char sBuffer[128];
 	
@@ -75,7 +75,7 @@ void ShowCasesMenu(int iClient)
 	}
 	
 	hMenu.ExitBackButton = true;
-	hMenu.Display(iClient, MENU_TIME_FOREVER);
+	hMenu.DisplayAt(iClient, iPos, MENU_TIME_FOREVER);
 }
 
 int Cases_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
@@ -110,21 +110,41 @@ int Cases_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 				}
 				else
 				{
-					UnlockSkin(iClient, iParam2 - 1);
+					if(g_bCanOpen[iClient])
+					{
+						g_bCanOpen[iClient] = false;
+						CreateTimer(g_fOpenDelay, Timer_ResetDelay, GetClientUserId(iClient), TIMER_FLAG_NO_MAPCHANGE);
+						UnlockSkin(iClient, iParam2 - 1);
+					}
+					else
+					{
+						CPrintToChat(iClient, "%T", "NotYet", iClient, g_fOpenDelay);
+					}
+					
+					ShowCasesMenu(iClient, hMenu.Selection);
 				}
 			}
 		}
 		
 		case MenuAction_Cancel:
 		{	
-			if(iParam2 == MenuCancel_ExitBack)
+			switch(iParam2)
 			{
-				ShowMainMenu(iClient);
-			}			
+				case MenuCancel_ExitBack:ShowMainMenu(iClient);
+			}
 		}
 	}
 	
 	return 0;
+}
+
+Action Timer_ResetDelay(Handle hTimer, int iUserId)
+{
+	int iClient = GetClientOfUserId(iUserId);
+	if(iClient != 0)
+	{
+		g_bCanOpen[iClient] = true;
+	}
 }
 
 void ShowPreviewMenu(int iClient, int iCaseId)
@@ -201,7 +221,7 @@ int Inventory_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 		case MenuAction_End: delete hMenu;
 		case MenuAction_Select:
 		{
-			char sKey[32], sSkinName[64];
+			char sKey[32];
 			hMenu.GetItem(iParam2, sKey, sizeof(sKey));
 			
 			if(StrEqual(sKey, "gloves"))
@@ -210,22 +230,7 @@ int Inventory_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 			}
 			else
 			{
-				ArrayList hClientSkins;
-				g_hInventory[iClient].GetValue(sKey, hClientSkins);
-				
-				Menu hSkinsMenu = new Menu(SkinsMenu_Handler);
-				hSkinsMenu.SetTitle("%T", "SkinsMenu", iClient, PLUGIN_VERSION, GetBalance(iClient), GetTotalSkinsCount(iClient), sKey, GetTotalGlovesCount(iClient)); 
-				
-				hSkinsMenu.AddItem(sKey, "Default");
-				
-				for(int iSkinIndex = 0; iSkinIndex < hClientSkins.Length; iSkinIndex++)
-				{
-					GetSkinName(hClientSkins.Get(iSkinIndex), sSkinName, sizeof(sSkinName));
-					hSkinsMenu.AddItem(sKey, sSkinName);
-				}
-				
-				hSkinsMenu.ExitBackButton = true;
-				hSkinsMenu.Display(iClient, MENU_TIME_FOREVER);				
+				ShowWeaponSkins(iClient, sKey, 0);			
 			}
 		}
 		
@@ -237,6 +242,28 @@ int Inventory_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 			}
 		}
 	}
+}
+
+void ShowWeaponSkins(int iClient, const char[] sWeaponClassname, int iStart = 0)
+{
+	char sSkinName[128];
+	
+	ArrayList hClientSkins;
+	g_hInventory[iClient].GetValue(sWeaponClassname, hClientSkins);
+	
+	Menu hSkinsMenu = new Menu(SkinsMenu_Handler);
+	hSkinsMenu.SetTitle("%T", "SkinsMenu", iClient, PLUGIN_VERSION, GetBalance(iClient), GetTotalSkinsCount(iClient), sWeaponClassname, GetTotalGlovesCount(iClient)); 
+	
+	hSkinsMenu.AddItem(sWeaponClassname, "Default");
+	
+	for(int iSkinIndex = 0; iSkinIndex < hClientSkins.Length; iSkinIndex++)
+	{
+		GetSkinName(hClientSkins.Get(iSkinIndex), sSkinName, sizeof(sSkinName));
+		hSkinsMenu.AddItem(sWeaponClassname, sSkinName);
+	}
+	
+	hSkinsMenu.ExitBackButton = true;
+	hSkinsMenu.DisplayAt(iClient, iStart, MENU_TIME_FOREVER);				
 }
 
 int SkinsMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
@@ -297,11 +324,11 @@ int SkinsMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 					}					
 				}
 
-				hSkinsMenu.Display(iClient, MENU_TIME_FOREVER);				
+				hSkinsMenu.Display(iClient, MENU_TIME_FOREVER);			
 			}
 			else
 			{
-				ShowInventory(iClient);
+				ShowWeaponSkins(iClient, sKey, hMenu.Selection);
 				if(IsKnife(sKey))
 				{
 					Weapons_SetClientKnife(iClient, "weapon_knife", true);
@@ -370,7 +397,7 @@ int SkinMenu_Handler(Menu hMenu, MenuAction iAction, int iParam1, int iParam2)
 			
 			switch(iParam2)
 			{
-				case 0: 
+				case 0: // Equipt
 				{
 					enum_skin hWeaponSkin;
 					if(g_hSkins.GetArray(StringToInt(sData[1]), hWeaponSkin))
@@ -438,7 +465,7 @@ int SkinMenu_Handler(Menu hMenu, MenuAction iAction, int iParam1, int iParam2)
 						DB_DeleteSkin(GetSteamAccountID(iClient), iItemId);
 					}
 					
-					ShowInventory(iClient);
+					ShowWeaponSkins(iClient, sData[0], 0);
 				}
 			}
 			
@@ -457,7 +484,11 @@ int SkinMenu_Handler(Menu hMenu, MenuAction iAction, int iParam1, int iParam2)
 		{
 			if(iParam2 == MenuCancel_ExitBack)
 			{
-				ShowInventory(iParam1);
+				char sKey[128], sData[2][128];
+				hMenu.GetItem(0, sKey, sizeof(sKey));
+				ExplodeString(sKey, ";", sData, sizeof(sData), sizeof(sData[]));
+				
+				ShowWeaponSkins(iParam1, sData[0]);
 			}
 		}
 	}
@@ -570,7 +601,15 @@ int MarketSkinItem_Handler(Menu hMenu, MenuAction iAction, int iClient, int iPar
 			
 			SetBalance(iClient, GetBalance(iClient) - hItem.fPrice);
 			
-			ShowSkinsMarket(iClient);
+			hMenu.DisplayAt(iClient, hMenu.Selection, MENU_TIME_FOREVER);
+		}
+		
+		case MenuAction_Cancel:
+		{
+			if(iParam2 == MenuCancel_ExitBack)
+			{
+				ShowSkinsMarket(iClient);
+			}
 		}
 	}		
 	
@@ -627,7 +666,7 @@ int MarketGlovesItem_Handler(Menu hMenu, MenuAction iAction, int iClient, int iP
 			
 			SetBalance(iClient, GetBalance(iClient) - hGloves.fPrice);
 			
-			ShowGlovesMarket(iClient);
+			hMenu.DisplayAt(iClient, hMenu.Selection, MENU_TIME_FOREVER);
 		}
 		
 		case MenuAction_Cancel:
@@ -744,6 +783,32 @@ int GlovesTypesMenu_Handler(Menu hMenu, MenuAction iAction, int iParam1, int iPa
 			}
 		}
 	}
+}
+
+void ShowGlovesByType(int iClient, const char[] sType, int iStart = 0)
+{
+	enum_glove hGlove;
+	
+	char sInfo[64];
+	
+	Menu hGlovesMenu = new Menu(GlovesList_Handler);
+	hGlovesMenu.ExitBackButton = true;
+	hGlovesMenu.SetTitle("%T", "GlovesMenu", iClient, PLUGIN_VERSION, GetBalance(iClient), GetTotalSkinsCount(iClient), sType, GetTotalGlovesCount(iClient)); 
+	
+	ArrayList hGlovesList;
+	g_hInventory[iClient].GetValue(sType, hGlovesList);
+	
+	int iLen = hGlovesList.Length, iGloveId;
+	for(int iGlove = 0; iGlove < iLen; iGlove++)
+	{
+		iGloveId = hGlovesList.Get(iGlove);
+		g_hGloves.GetArray(iGloveId, hGlove);
+		
+		Format(sInfo, sizeof(sInfo), "%i", iGloveId);
+		hGlovesMenu.AddItem(sInfo, hGlove.sName);
+	}
+	
+	hGlovesMenu.DisplayAt(iClient, iStart, MENU_TIME_FOREVER);		
 }
 
 int GlovesList_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
@@ -898,6 +963,7 @@ int GloveMenu_Handler(Menu hMenu, MenuAction iAction, int iParam1, int iParam2)
 			}
 			else
 			{
+				ShowGlovesByType(iClient, hGlove.sType, hMenu.Selection);
 				delete hMenu;
 			}
 		}
@@ -906,7 +972,15 @@ int GloveMenu_Handler(Menu hMenu, MenuAction iAction, int iParam1, int iParam2)
 		{	
 			if(iParam2 == MenuCancel_ExitBack)
 			{
-				ShowGlovesInventory(iParam1);
+				enum_glove hGlove;
+			
+				char sInfo[32];
+				hMenu.GetItem(0, sInfo, sizeof(sInfo));
+				
+				int iGlove = StringToInt(sInfo);
+				g_hGloves.GetArray(iGlove, hGlove);
+				
+				ShowGlovesByType(iParam1, hGlove.sType);
 			}			
 		}
 	}

@@ -1,5 +1,11 @@
 "Phrases"
 {
+	"NotYet"
+	{
+		"#format"		"{1:.1f}"
+		"en"			"[{lime}CASES{default}] You must wait{green} {1}{default} seconds everytime you open a case."
+	}
+
 	"NoGloves"
 	{
 		"en"			"You have no gloves"

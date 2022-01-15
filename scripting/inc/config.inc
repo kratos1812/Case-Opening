@@ -20,6 +20,7 @@ void LoadItems()
 			{
 				delete g_hMarketItemMenu[iWeaponIndex];
 				g_hMarketItemMenu[iWeaponIndex] = new Menu(MarketSkinItem_Handler, MENU_ACTIONS_ALL);
+				g_hMarketItemMenu[iWeaponIndex].ExitBackButton = true;
 			}
 			
 			do
@@ -29,7 +30,7 @@ void LoadItems()
 				iDefIndex = hKeyValues.GetNum("weapon_index");
 				iSkinIndex = hKeyValues.GetNum("skin_index");
 				iRarity = hKeyValues.GetNum("rarity");
-				fPrice = hKeyValues.GetFloat("price_market");
+				fPrice = hKeyValues.GetFloat("price_market") * g_fPriceMultiplier;
 				
 				pWeaponSkin.iWeaponIndex = iDefIndex;
 				pWeaponSkin.iSkinIndex = iSkinIndex;

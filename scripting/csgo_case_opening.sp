@@ -107,6 +107,12 @@ public void OnPluginStart()
 	g_hBalanceMode = CreateConVar("sm_cases_balance_mode", "0", "Balance mode. 0 = Plugin's custom balance. 1 = Shop Core balance. 2 = Store by Zephyrus balance.", FCVAR_NOTIFY, true, 0.0, true, 2.0);
 	g_hBalanceMode.AddChangeHook(OnConvarsChanged);
 	
+	g_hPriceMultiplier = CreateConVar("sm_cases_price_multiplier", "1.0", "This x \"price_market\" from the config = price of the skins.", FCVAR_NOTIFY, true, 1.0);
+	g_hPriceMultiplier.AddChangeHook(OnConvarsChanged);
+	
+	g_hOpenDelay = CreateConVar("sm_cases_open_delay", "0.5", "Dela y against spam-oppening skins.", FCVAR_NOTIFY, true, 0.0);
+	g_hOpenDelay.AddChangeHook(OnConvarsChanged);
+	
 	AutoExecConfig(true, "case_opening_kratoss");
 	
 	g_hBalance = new Cookie("Case Opening Balance", "Stores the credits of the players", CookieAccess_Private);
@@ -152,6 +158,7 @@ public void OnClientPutInServer(int iClient)
 	g_bWaintingForFloat[iClient] = false;
 	g_bWaitingForName[iClient] = false;
 	g_bWaitingForFloatGloves[iClient] = false;
+	g_bCanOpen[iClient] = true;
 	strcopy(g_sTempWeapon[iClient], sizeof(g_sTempWeapon[]), "");
 }
 
@@ -161,6 +168,7 @@ public void OnClientDisconnect(int iClient)
 	g_bWaintingForFloat[iClient] = false;
 	g_bWaitingForName[iClient] = false;
 	g_bWaitingForFloatGloves[iClient] = false;
+	g_bCanOpen[iClient] = false;
 	strcopy(g_sTempWeapon[iClient], sizeof(g_sTempWeapon[]), "");
 	
 	if(g_hInventory[iClient])
@@ -188,7 +196,10 @@ public void OnClientPostAdminCheck(int iClient)
 	}
 	else
 	{
-		LogMessage("Couldn't get ID from %L", iClient);
+		if(!IsFakeClient(iClient))
+		{
+			LogMessage("Couldn't get ID from %L", iClient);
+		}
 	}
 }
 
@@ -242,51 +253,60 @@ void OnConvarsChanged(ConVar hConVar, const char[] sOldValue, const char[] sNewV
 {
 	if(hConVar == g_hFloatPrice)
 	{
-		g_fFloatPrice = StringToFloat(sNewValue);
+		g_fFloatPrice = hConVar.FloatValue;
 	}
 	else if(hConVar == g_hSeedPrice)
 	{
-		g_fSeedPrice = StringToFloat(sNewValue);
+		g_fSeedPrice = hConVar.FloatValue;
 	}
 	else if(hConVar == g_hStatTrackPrice)
 	{
-		g_fStarTrackPrice = StringToFloat(sNewValue);
+		g_fStarTrackPrice = hConVar.FloatValue;
 	}
 	else if(hConVar == g_hNameTagPrice)
 	{
-		g_fNameTagPrice = StringToFloat(sNewValue);
+		g_fNameTagPrice = hConVar.FloatValue;
 	}
 	else if(hConVar == g_hKillReward)
 	{
-		g_fKillReward = StringToFloat(sNewValue);
+		g_fKillReward = hConVar.FloatValue;
 	}
 	else if(hConVar == g_hDrops)
 	{
-		g_bDropsEnabled = StringToInt(sNewValue) == 1;
+		g_bDropsEnabled = hConVar.BoolValue;
 	}
 	else if(hConVar == g_hDropsChance)
 	{
-		g_fDropsChance = StringToFloat(sNewValue);
+		g_fDropsChance = hConVar.FloatValue;
 	}
 	else if(hConVar == g_hCommandsOverride)
 	{
-		g_bOverrideCommands = StringToInt(sNewValue) == 1;
+		g_bOverrideCommands = hConVar.BoolValue;
 	}
 	else if(hConVar == g_hEnableMarketSkins)
 	{
-		g_bEnableMarketSkins = StringToInt(sNewValue) == 1;
+		g_bEnableMarketSkins = hConVar.BoolValue;
 	}
 	else if(hConVar == g_hEnableMarketGloves)
 	{
-		g_bEnableMarketGloves = StringToInt(sNewValue) == 1;
+		g_bEnableMarketGloves = hConVar.BoolValue;
 	}
 	else if(hConVar == g_hEnableQuickSell)
 	{
-		g_bEnableQuickSell = StringToInt(sNewValue) == 1;
+		g_bEnableQuickSell = hConVar.BoolValue;
 	}
 	else if(hConVar == g_hBalanceMode)
 	{
-		g_iBalanceMode = StringToInt(sNewValue);
+		g_iBalanceMode = hConVar.IntValue;
+	}
+	else if(hConVar == g_hPriceMultiplier)
+	{
+		LoadItems();
+		g_fPriceMultiplier = hConVar.FloatValue;
+	}
+	else if(hConVar == g_hOpenDelay)
+	{
+		g_fOpenDelay = hConVar.FloatValue;
 	}
 	
 	CheckBalances();
@@ -305,8 +325,11 @@ public void OnConfigsExecuted()
 	g_bEnableMarketGloves = g_hEnableMarketGloves.BoolValue;
 	g_bEnableQuickSell = g_hEnableQuickSell.BoolValue;
 	g_iBalanceMode = g_hBalanceMode.IntValue;
+	g_fPriceMultiplier = g_hPriceMultiplier.FloatValue;
+	g_fOpenDelay = g_hOpenDelay.FloatValue;
 	
 	CheckBalances();
+	LoadItems();
 }
 
 Action CommandListener_BlockWSCommand(int iClient, const char[] sCommand, int iArgc)

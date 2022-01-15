@@ -10,6 +10,7 @@ bool g_bPreviewMode[MAXPLAYERS + 1];
 bool g_bWaintingForFloat[MAXPLAYERS + 1];
 bool g_bWaitingForName[MAXPLAYERS + 1];
 bool g_bWaitingForFloatGloves[MAXPLAYERS + 1];
+bool g_bCanOpen[MAXPLAYERS + 1];
 bool g_bDropsEnabled;
 bool g_bOverrideCommands;
 bool g_bEnableMarketSkins;
@@ -41,6 +42,8 @@ ConVar g_hEnableMarketSkins;
 ConVar g_hEnableMarketGloves;
 ConVar g_hEnableQuickSell;
 ConVar g_hBalanceMode;
+ConVar g_hPriceMultiplier;
+ConVar g_hOpenDelay;
 
 float g_fFloatPrice;
 float g_fSeedPrice;
@@ -48,6 +51,8 @@ float g_fStarTrackPrice;
 float g_fNameTagPrice;
 float g_fKillReward;
 float g_fDropsChance;
+float g_fPriceMultiplier;
+float g_fOpenDelay;
 
 int g_iBalanceMode;
 
