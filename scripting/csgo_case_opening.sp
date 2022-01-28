@@ -14,7 +14,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define PLUGIN_VERSION "1.1.0b"
+#define PLUGIN_VERSION "1.2.0b"
 
 /*
  - 1.2.0b
