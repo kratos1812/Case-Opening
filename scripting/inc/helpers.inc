@@ -23,7 +23,7 @@ stock void DebugCases()
 	}
 }
 
-stock void AddSkinToMenu(Menu hMenu, const char[] sSkinData)
+stock void AddSkinToMenu(Menu hMenu, const char[] sSkinData, const char[] sCategory = "Default Cases")
 {
 	char sData[Data_Max][64], sItem[64];
 	enum_skin hWeaponSkin;
@@ -32,7 +32,7 @@ stock void AddSkinToMenu(Menu hMenu, const char[] sSkinData)
 	if(g_hSkins.GetArray(StringToInt(sData[Data_Id]), hWeaponSkin))
 	{
 		Format(sItem, sizeof(sItem), "%s | Price: [$%.2f]", hWeaponSkin.szName, hWeaponSkin.fPrice);
-		hMenu.AddItem("", sItem, ITEMDRAW_DISABLED);
+		hMenu.AddItem(sCategory, sItem, ITEMDRAW_DISABLED);
 	}
 }
 

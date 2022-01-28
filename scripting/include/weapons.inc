@@ -15,6 +15,9 @@ forward Action Weapons_OnClientKnifeSelectPre(int client, int knifeId, char[] kn
 //Called after client selects a knife from !knife.
 forward void Weapons_OnClientKnifeSelectPost(int client, int knifeId, char[] knifeName);
 
+// Gets a client's skin for a classname.
+native int Weapons_GetClientSkin(int client, const char[] weapon);
+
 //Sets client's skins for a weapons.
 native void Weapons_SetClientSkin(int client, const char[] weapon, int skin);
 

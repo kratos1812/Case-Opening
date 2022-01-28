@@ -1,13 +1,27 @@
-void UnlockSkin(int iClient, int iCaseId)
+void UnlockSkin(int iClient, int iCaseId, const char[] sCategory = "Default Cases")
 {
 	int iChances, iItemId;
-	
-	char sSkinData[64], sData[Data_Max][10];
-	
-	ArrayList hSkins = g_hCasesSkins.Get(iCaseId); // Get the skins from the case.
-	ArrayList hSkinsChances = new ArrayList();
-	
+
 	enum_skin hWeaponSkin;
+	
+	char sSkinData[64], sData[Data_Max][10], sBuffer[32], sCaseName[32];
+	
+	ArrayList hSkinsChances = new ArrayList();
+	ArrayList hCases;
+	
+	g_hCasesCategories.GetValue(sCategory, hCases);
+	hCases.GetString(iCaseId, sBuffer, sizeof(sBuffer)); // Here, iCaseId, becomes the idx of the case, FROM THE CATEGORY LIST
+	
+	for(iCaseId = 0; iCaseId < g_hCasesNames.Length; iCaseId++)
+	{
+		g_hCasesNames.GetString(iCaseId, sCaseName, sizeof(sCaseName));
+		
+		if(strcmp(sBuffer, sCaseName) == 0)
+		{
+			break;
+		}
+	}
+	ArrayList hSkins = g_hCasesSkins.Get(iCaseId); // Get the skins from the case.
 	
 	float fPrice = g_hCasesPrices.Get(iCaseId);
 	SetBalance(iClient, GetBalance(iClient) - fPrice); // Remove credits

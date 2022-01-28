@@ -3,8 +3,8 @@
 #include <kRatossCSGO>
 #include <clientprefs>
 #include <multicolors>
-#include <weapons>
-#include <gloves>
+#include "include/weapons.inc"
+#include "include/gloves.inc"
 
 #undef REQUIRE_PLUGIN
 #tryinclude <shop>
@@ -15,6 +15,15 @@
 #pragma newdecls required
 
 #define PLUGIN_VERSION "1.1.0b"
+
+/*
+ - 1.2.0b
+ - Fixed a bug with sm_cases_cmds_override.
+ - Fixed a bug when Case Preview would be inaccesible if you don't got the money to open them.
+ - Added categories for cases.
+ - Fixed a bug when quick-selling a skin.
+ - Fixed the MySQL error for *some* users.
+*/
 
 // Custom files.
 #include "inc/globals.inc"
@@ -110,7 +119,7 @@ public void OnPluginStart()
 	g_hPriceMultiplier = CreateConVar("sm_cases_price_multiplier", "1.0", "This x \"price_market\" from the config = price of the skins.", FCVAR_NOTIFY, true, 1.0);
 	g_hPriceMultiplier.AddChangeHook(OnConvarsChanged);
 	
-	g_hOpenDelay = CreateConVar("sm_cases_open_delay", "0.5", "Dela y against spam-oppening skins.", FCVAR_NOTIFY, true, 0.0);
+	g_hOpenDelay = CreateConVar("sm_cases_open_delay", "0.5", "Delay against spam-oppening skins.", FCVAR_NOTIFY, true, 0.0);
 	g_hOpenDelay.AddChangeHook(OnConvarsChanged);
 	
 	AutoExecConfig(true, "case_opening_kratoss");
@@ -327,6 +336,7 @@ public void OnConfigsExecuted()
 	g_iBalanceMode = g_hBalanceMode.IntValue;
 	g_fPriceMultiplier = g_hPriceMultiplier.FloatValue;
 	g_fOpenDelay = g_hOpenDelay.FloatValue;
+	g_bOverrideCommands = g_hCommandsOverride.BoolValue;
 	
 	CheckBalances();
 	LoadItems();

@@ -22,6 +22,7 @@ bool g_bShopExists;
 char g_sTempWeapon[MAXPLAYERS + 1][32];
 
 StringMap g_hInventory[MAXPLAYERS + 1]; // Player's inventory. Where the key is the classname of the weapon and the value is the ArrayList containing the skins.
+StringMap g_hCasesCategories;
 
 Cookie g_hBalance; // No need to use a different MySQL table just to store the balance
 
@@ -135,16 +136,12 @@ Menu g_hGloveMarketItemMenu[sizeof(g_sGlovesType)];
 
 char g_sMySQLTables[][] = // Might add more
 {
-	"\
-	CREATE TABLE IF NOT EXISTS `kratoss_case_opening`(\
+	"CREATE TABLE IF NOT EXISTS `kratoss_case_opening`(\
 	    `uId` INT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,\
 	    `skinId` INT UNSIGNED NOT NULL,\
-	    `accountId` INT UNSIGNED NOT NULL\
-	)",
-	
-	"\
-	ALTER TABLE\
-    `kratoss_case_opening` ADD COLUMN IF NOT EXISTS `type` INT UNSIGNED NOT NULL DEFAULT 0 AFTER `skinId`;"
+	    `accountId` INT UNSIGNED NOT NULL,\
+	    `type` INT UNSIGNED NOT NULL DEFAULT 0\
+	);"
 };
 
 int g_iWeaponDefIndex[] = {

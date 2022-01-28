@@ -225,6 +225,12 @@
 		"en"			"Buy Skins"
 	}
 	
+	"CasesTitle_Categories"
+	{
+		"#format"		"{1:s},{2:.2f},{3:i},{4:i}"
+		"en"			"--==| CASE OPENING {1} by kRatoss |==--\n \n    Credits: ${2} ✦\n    Skins: {3}\n    Gloves: {4}\n \n--==| Cases Categories\n "
+	}
+	
 	"CasesTitle"
 	{
 		"#format"		"{1:s},{2:.2f},{3:i},{4:i}"

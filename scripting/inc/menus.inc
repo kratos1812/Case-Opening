@@ -60,18 +60,69 @@ void ShowCasesMenu(int iClient, int iPos = 0)
 {
 	char sBuffer[128];
 	
-	Menu hMenu = new Menu(Cases_Handler, MENU_ACTIONS_ALL);
+	Menu hMenu = new Menu(CasesCategories_Handler, MENU_ACTIONS_ALL);
+	hMenu.SetTitle("%T", "CasesTitle_Categories", iClient, PLUGIN_VERSION, GetBalance(iClient), GetTotalSkinsCount(iClient), GetTotalGlovesCount(iClient));
+	
+	StringMapSnapshot hSnap = g_hCasesCategories.Snapshot();
+	for(int iIndex = 0; iIndex < hSnap.Length; iIndex++)
+	{
+		hSnap.GetKey(iIndex, sBuffer, sizeof(sBuffer));
+		hMenu.AddItem(sBuffer, sBuffer);
+	}
+	
+	delete hSnap;
+	
+	hMenu.ExitBackButton = true;
+	hMenu.DisplayAt(iClient, iPos, MENU_TIME_FOREVER);
+}
+
+public int CasesCategories_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
+{
+	switch(iAction)
+	{
+		case MenuAction_End:delete hMenu;
+		case MenuAction_Select:
+		{
+			char sBuffer[32];
+			hMenu.GetItem(iParam2, sBuffer, sizeof(sBuffer));
+			
+			ShowCasesMenuFinal(iClient, 0, sBuffer);
+		}
+		
+		case MenuAction_Cancel:
+		{	
+			switch(iParam2)
+			{
+				case MenuCancel_ExitBack:ShowMainMenu(iClient);
+			}
+		}
+	}
+}
+
+void ShowCasesMenuFinal(int iClient, int iPos = 0, const char[] sCategory = "Default Cases")
+{
+	float fPrice;
+	
+	char sBuffer[128];
+	
+	Menu hMenu = new Menu(Cases_Handler);
 	hMenu.SetTitle("%T", "CasesTitle", iClient, PLUGIN_VERSION, GetBalance(iClient), GetTotalSkinsCount(iClient), GetTotalGlovesCount(iClient));
 	
 	FormatEx(sBuffer, sizeof(sBuffer), "%T", g_bPreviewMode[iClient] ? "PreviewModeON" : "PreviewModeOFF", iClient);
 	hMenu.AddItem("preview", sBuffer);
 	
+	ArrayList hCases;
+	g_hCasesCategories.GetValue(sCategory, hCases); 
+	
 	for(int iCaseId = 0; iCaseId < g_hCasesNames.Length; iCaseId++) // Loop through existing cases
 	{
 		g_hCasesNames.GetString(iCaseId, sBuffer, sizeof(sBuffer)); // Get the case name
-		
-		Format(sBuffer, sizeof(sBuffer), "%T", "CasesItem", iClient, sBuffer, g_hCasesPrices.Get(iCaseId)); // Format the item(add price)
-		hMenu.AddItem("", sBuffer);
+		if(hCases.FindString(sBuffer) != -1) 
+		{
+			fPrice = g_hCasesPrices.Get(iCaseId);
+			Format(sBuffer, sizeof(sBuffer), "%T", "CasesItem", iClient, sBuffer, fPrice); // Format the item(add price)
+			hMenu.AddItem(sCategory, sBuffer, fPrice > GetBalance(iClient) ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+		}
 	}
 	
 	hMenu.ExitBackButton = true;
@@ -83,30 +134,22 @@ int Cases_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 	switch(iAction)
 	{
 		case MenuAction_End:delete hMenu;
-		case MenuAction_DrawItem:
-		{
-			if(iParam2 != 0)
-			{
-				if(GetBalance(iClient) < g_hCasesPrices.Get(iParam2 - 1)) 
-				{
-					return ITEMDRAW_DISABLED;
-				}			
-			}
-			return ITEMDRAW_DEFAULT;
-		}
-		
 		case MenuAction_Select:
 		{
+			char sCategory[64];
+			
 			if(iParam2 == 0)
 			{
+				hMenu.GetItem(iParam2 + 1, sCategory, sizeof(sCategory));
 				g_bPreviewMode[iClient] = !g_bPreviewMode[iClient]; // Switch the mode
-				ShowCasesMenu(iClient);
+				ShowCasesMenuFinal(iClient, hMenu.Selection, sCategory);
 			}
 			else
 			{
+				hMenu.GetItem(iParam2, sCategory, sizeof(sCategory));
 				if(g_bPreviewMode[iClient])
 				{
-					ShowPreviewMenu(iClient, iParam2 - 1);
+					ShowPreviewMenu(iClient, iParam2 - 1, sCategory);
 				}
 				else
 				{
@@ -114,14 +157,15 @@ int Cases_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 					{
 						g_bCanOpen[iClient] = false;
 						CreateTimer(g_fOpenDelay, Timer_ResetDelay, GetClientUserId(iClient), TIMER_FLAG_NO_MAPCHANGE);
-						UnlockSkin(iClient, iParam2 - 1);
+						
+						UnlockSkin(iClient, iParam2 - 1, sCategory);
 					}
 					else
 					{
 						CPrintToChat(iClient, "%T", "NotYet", iClient, g_fOpenDelay);
 					}
 					
-					ShowCasesMenu(iClient, hMenu.Selection);
+					ShowCasesMenuFinal(iClient, hMenu.Selection, sCategory);
 				}
 			}
 		}
@@ -130,7 +174,7 @@ int Cases_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 		{	
 			switch(iParam2)
 			{
-				case MenuCancel_ExitBack:ShowMainMenu(iClient);
+				case MenuCancel_ExitBack:ShowCasesMenu(iClient);
 			}
 		}
 	}
@@ -147,9 +191,24 @@ Action Timer_ResetDelay(Handle hTimer, int iUserId)
 	}
 }
 
-void ShowPreviewMenu(int iClient, int iCaseId)
+void ShowPreviewMenu(int iClient, int iCaseId, const char[] sCategory = "Default Cases")
 {
-	char sSkinData[64];
+	char sSkinData[64], sBuffer[32], sCaseName[32];
+	ArrayList hCases;
+	
+	g_hCasesCategories.GetValue(sCategory, hCases);
+	hCases.GetString(iCaseId, sBuffer, sizeof(sBuffer)); // Here, iCaseId, becomes the idx of the case, FROM THE CATEGORY LIST
+	
+	for(iCaseId = 0; iCaseId < g_hCasesNames.Length; iCaseId++)
+	{
+		g_hCasesNames.GetString(iCaseId, sCaseName, sizeof(sCaseName));
+		
+		if(strcmp(sBuffer, sCaseName) == 0)
+		{
+			break;
+		}
+	}
+
 	ArrayList hSkins = g_hCasesSkins.Get(iCaseId); // Get the skins array handle
 	
 	Menu hMenu = new Menu(PreviewCase_Handler);
@@ -158,7 +217,7 @@ void ShowPreviewMenu(int iClient, int iCaseId)
 	for(int iSkinId = 0; iSkinId < hSkins.Length; iSkinId++) // Loop through skins
 	{
 		hSkins.GetString(iSkinId, sSkinData, sizeof(sSkinData)); // Get skin data
-		AddSkinToMenu(hMenu, sSkinData);
+		AddSkinToMenu(hMenu, sSkinData, sCategory);
 	}
 	
 	hMenu.ExitButton = false;
@@ -175,7 +234,9 @@ int PreviewCase_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2
 		{
 			if(iParam2 == MenuCancel_ExitBack)
 			{
-				ShowCasesMenu(iClient);
+				char sCategory[64];
+				hMenu.GetItem(0, sCategory, sizeof(sCategory));
+				ShowCasesMenuFinal(iClient, .sCategory=sCategory);
 			}
 		}
 	}
@@ -452,7 +513,10 @@ int SkinMenu_Handler(Menu hMenu, MenuAction iAction, int iParam1, int iParam2)
 							Weapons_SetClientKnife(iClient, "weapon_knife", true);
 						}
 						
-						Weapons_SetClientSkin(iClient, sData[0], 0);
+						if(Weapons_GetClientSkin(iClient, sData[0]) == hWeaponSkin.iSkinIndex)
+						{
+							Weapons_SetClientSkin(iClient, sData[0], 0);
+						}
 						
 						SetBalance(iClient, GetBalance(iClient) + hWeaponSkin.fPrice);
 						

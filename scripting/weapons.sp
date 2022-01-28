@@ -52,6 +52,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 
 	CreateNative("Weapons_SetClientKnife", Weapons_SetClientKnife_Native);
 	CreateNative("Weapons_GetClientKnife", Weapons_GetClientKnife_Native);
+	CreateNative("Weapons_GetClientSkin", Weapons_GetClientSkin_Native);
 	CreateNative("Weapons_SetClientSkin", Weapons_SetClientSkin_Native);
 	CreateNative("Weapons_SetClientWear", Weapons_SetClientWear_Native);
 	CreateNative("Weapons_SetClientSeed", Weapons_SetClientSeed_Native);

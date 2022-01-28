@@ -79,7 +79,7 @@ void LoadCases()
 	{
 		if(hKeyValues.GotoFirstSubKey()) // Go to the first case and begin reading it
 		{
-			char szCaseName[32], szKey[12], szSkinData[64];
+			char szCaseName[32], szKey[12], szSkinData[64], szCaseCategoryName[32];
 			int nItems;
 			ArrayList hCaseSkins;
 			
@@ -87,6 +87,9 @@ void LoadCases()
 			g_hCasesPrices = new ArrayList(); // Create the list of the cases prices
 			g_hCasesSkins = new ArrayList(); // Create the list that will hold hCaseSkins(all the skins);
 			g_hCasesReturns = new ArrayList(); // This holds the return value for cases
+			g_hCasesCategories = new StringMap();
+			
+			ArrayList hCatCases;
 			
 			do{
 				hKeyValues.GetSectionName(szCaseName, sizeof(szCaseName)); // Get the case name
@@ -94,6 +97,22 @@ void LoadCases()
 				
 				g_hCasesPrices.Push(hKeyValues.GetFloat("price")); // Get the case price
 				g_hCasesReturns.Push(hKeyValues.GetFloat("return")); // Get the case return value
+				
+				hKeyValues.GetString("category_name", szCaseCategoryName, sizeof(szCaseCategoryName));
+				if(!szCaseCategoryName[0])
+				{
+					strcopy(szCaseCategoryName, sizeof(szCaseCategoryName), "Default Cases");
+				}
+				
+				g_hCasesCategories.GetValue(szCaseCategoryName, hCatCases);
+				if(hCatCases == null)
+				{
+					hCatCases = new ArrayList(ByteCountToCells(64));
+				}
+				
+				hCatCases.PushString(szCaseName); 
+				g_hCasesCategories.SetValue(szCaseCategoryName, hCatCases);
+				hCatCases = null;
 				
 				if(hKeyValues.JumpToKey("Skins")) // Go to the skins list and read them
 				{
