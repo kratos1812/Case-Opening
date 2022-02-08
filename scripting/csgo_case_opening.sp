@@ -78,6 +78,7 @@ public void OnPluginStart()
 	AddCommandListener(CommandListener_BlockWSCommand, "sm_glove");
 	AddCommandListener(CommandListener_BlockWSCommand, "sm_gloves");
 	AddCommandListener(CommandListener_BlockWSCommand, "sm_eldiven");
+	AddCommandListener(CommandListener_BlockWSCommand, "sm_gllang");
 	
 	CreateConVar("sm_cases_version", PLUGIN_VERSION, "Case Opening by kRatoss Version", FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
 	
