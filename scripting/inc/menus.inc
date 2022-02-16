@@ -907,7 +907,7 @@ int GlovesList_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 			Format(sItem, sizeof(sItem), "%T", "SetFloatGloves", iClient, g_fFloatPrice);
 			hGloveMenu.AddItem(sInfo, sItem, fBalance < g_fFloatPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
 			
-			if(g_bEnableQuickSell)
+			if(g_bQuickSellGloves)
 			{
 				if(hGlove.fPrice != 0.0)
 				{

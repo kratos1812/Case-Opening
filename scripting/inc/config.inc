@@ -30,7 +30,7 @@ void LoadItems()
 				iDefIndex = hKeyValues.GetNum("weapon_index");
 				iSkinIndex = hKeyValues.GetNum("skin_index");
 				iRarity = hKeyValues.GetNum("rarity");
-				fPrice = hKeyValues.GetFloat("price_market") * g_fPriceMultiplier;
+				fPrice = hKeyValues.GetFloat("price_market") * g_fPriceMultiplierSkins;
 				
 				pWeaponSkin.iWeaponIndex = iDefIndex;
 				pWeaponSkin.iSkinIndex = iSkinIndex;
@@ -258,7 +258,7 @@ void LoadGloves()
 				hKeyValues.GetString("name", sGloveName, sizeof(sGloveName));
 				hKeyValues.GetString("type", sGloveType, sizeof(sGloveType));
 				
-				fPrice = hKeyValues.GetFloat("price_market");
+				fPrice = hKeyValues.GetFloat("price_market") * g_fPriceMultiplierGloves;
 				
 				iIndex = hKeyValues.GetNum("index");
 				iDefIndex =  hKeyValues.GetNum("defindex");

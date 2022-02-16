@@ -14,15 +14,14 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define PLUGIN_VERSION "1.2.0b"
+#define PLUGIN_VERSION "1.3.0b"
 
 /*
- - 1.2.0b
- - Fixed a bug with sm_cases_cmds_override.
- - Fixed a bug when Case Preview would be inaccesible if you don't got the money to open them.
- - Added categories for cases.
- - Fixed a bug when quick-selling a skin.
- - Fixed the MySQL error for *some* users.
+ - 1.3.0b
+ - Fixed a bug when selecting a pattern.
+ - Added sm_cases_price_multiplier_gloves
+ - Added sm_cases_allow_quick_sell_gloves
+ - Added sm_cases_new_players_default_balance
 */
 
 // Custom files.
@@ -110,17 +109,26 @@ public void OnPluginStart()
 	g_hEnableMarketGloves = CreateConVar("sm_cases_allow_buy_gloves", "1", "Allow players to buy gloves?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_hEnableMarketGloves.AddChangeHook(OnConvarsChanged);
 	
-	g_hEnableQuickSell  = CreateConVar("sm_cases_allow_quick_sell", "1", "Allow players to quick sell skins and gloves?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_hEnableQuickSell  = CreateConVar("sm_cases_allow_quick_sell", "1", "Allow players to quick sell skins?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_hEnableQuickSell.AddChangeHook(OnConvarsChanged);
+	
+	g_hEnableQuickSellGloves  = CreateConVar("sm_cases_allow_quick_sell_gloves", "1", "Allow players to quick sell gloves?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_hEnableQuickSellGloves.AddChangeHook(OnConvarsChanged);
 	
 	g_hBalanceMode = CreateConVar("sm_cases_balance_mode", "0", "Balance mode. 0 = Plugin's custom balance. 1 = Shop Core balance. 2 = Store by Zephyrus balance.", FCVAR_NOTIFY, true, 0.0, true, 2.0);
 	g_hBalanceMode.AddChangeHook(OnConvarsChanged);
 	
-	g_hPriceMultiplier = CreateConVar("sm_cases_price_multiplier", "1.0", "This x \"price_market\" from the config = price of the skins.", FCVAR_NOTIFY, true, 1.0);
-	g_hPriceMultiplier.AddChangeHook(OnConvarsChanged);
+	g_hPriceMultiplierSkins = CreateConVar("sm_cases_price_multiplier", "1.0", "This x \"price_market\" from the config = price of the SKINS.", FCVAR_NOTIFY, true, 1.0);
+	g_hPriceMultiplierSkins.AddChangeHook(OnConvarsChanged);
+	
+	g_hPriceMultiplierGloves = CreateConVar("sm_cases_price_multiplier_gloves", "1.0", "This x \"price_market\" from the config = price of the GLOVES.", FCVAR_NOTIFY, true, 1.0);
+	g_hPriceMultiplierGloves.AddChangeHook(OnConvarsChanged);
 	
 	g_hOpenDelay = CreateConVar("sm_cases_open_delay", "0.5", "Delay against spam-oppening skins.", FCVAR_NOTIFY, true, 0.0);
 	g_hOpenDelay.AddChangeHook(OnConvarsChanged);
+	
+	g_hNewPlayerDefaultBalance = CreateConVar("sm_cases_new_players_default_balance", "200.0", "How much money new players start up with?", FCVAR_NOTIFY, true, 0.0);
+	g_hNewPlayerDefaultBalance.AddChangeHook(OnConvarsChanged);
 	
 	AutoExecConfig(true, "case_opening_kratoss");
 	
@@ -209,6 +217,14 @@ public void OnClientPostAdminCheck(int iClient)
 		{
 			LogMessage("Couldn't get ID from %L", iClient);
 		}
+	}
+}
+
+public void OnClientCookiesCached(int iClient)
+{
+	if(IsNewPlayer(iClient))
+	{
+		SetBalance(iClient, g_fDefaultBalance);
 	}
 }
 
@@ -308,14 +324,27 @@ void OnConvarsChanged(ConVar hConVar, const char[] sOldValue, const char[] sNewV
 	{
 		g_iBalanceMode = hConVar.IntValue;
 	}
-	else if(hConVar == g_hPriceMultiplier)
+	else if(hConVar == g_hPriceMultiplierSkins)
 	{
+		g_fPriceMultiplierSkins = hConVar.FloatValue;
 		LoadItems();
-		g_fPriceMultiplier = hConVar.FloatValue;
+	}
+	else if(hConVar == g_hPriceMultiplierGloves)
+	{
+		g_fPriceMultiplierGloves = hConVar.FloatValue;
+		LoadItems();
 	}
 	else if(hConVar == g_hOpenDelay)
 	{
 		g_fOpenDelay = hConVar.FloatValue;
+	}
+	else if(hConVar == g_hEnableQuickSellGloves)
+	{
+		g_bQuickSellGloves = hConVar.BoolValue;
+	}
+	else if(hConVar == g_hNewPlayerDefaultBalance)
+	{
+		g_fDefaultBalance = hConVar.FloatValue;
 	}
 	
 	CheckBalances();
@@ -334,9 +363,12 @@ public void OnConfigsExecuted()
 	g_bEnableMarketGloves = g_hEnableMarketGloves.BoolValue;
 	g_bEnableQuickSell = g_hEnableQuickSell.BoolValue;
 	g_iBalanceMode = g_hBalanceMode.IntValue;
-	g_fPriceMultiplier = g_hPriceMultiplier.FloatValue;
+	g_fPriceMultiplierSkins = g_hPriceMultiplierGloves.FloatValue;
+	g_fPriceMultiplierGloves = g_hPriceMultiplierGloves.FloatValue;
 	g_fOpenDelay = g_hOpenDelay.FloatValue;
 	g_bOverrideCommands = g_hCommandsOverride.BoolValue;
+	g_bQuickSellGloves = g_hEnableQuickSellGloves.BoolValue;
+	g_fDefaultBalance = g_hNewPlayerDefaultBalance.FloatValue;
 	
 	CheckBalances();
 	LoadItems();

@@ -127,7 +127,7 @@ public int Weapons_SetClientSeed_Native(Handle plugin, int numparams)
 	g_iWeaponSeed[client][index] = GetNativeCell(3);
 	
 	RemoveWeaponPrefix(g_WeaponClasses[index], weaponName, sizeof(weaponName));
-	Format(updateFields, sizeof(updateFields), "%s_seed = %.2f", weaponName, g_fFloatValue[client][index]);
+	Format(updateFields, sizeof(updateFields), "%s_seed = %d", weaponName, g_iWeaponSeed[client][index]);
 	UpdatePlayerData(client, updateFields);
 		
 	RefreshWeapon(client, index);

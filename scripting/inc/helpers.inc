@@ -36,6 +36,19 @@ stock void AddSkinToMenu(Menu hMenu, const char[] sSkinData, const char[] sCateg
 	}
 }
 
+stock bool IsNewPlayer(int iClient)
+{
+	char sBalance[32];
+	g_hBalance.Get(iClient, sBalance, sizeof(sBalance));
+	
+	if(!sBalance[0])
+	{
+		return true;
+	}
+	
+	return false;
+}
+
 stock float GetBalance(int iClient)
 {
 	switch(g_iBalanceMode)
