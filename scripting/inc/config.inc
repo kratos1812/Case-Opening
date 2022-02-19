@@ -266,11 +266,10 @@ void LoadGloves()
 				strcopy(hGloves.sName, sizeof(enum_glove::sName), sGloveName);
 				strcopy(hGloves.sType, sizeof(enum_glove::sType), sGloveType);
 				
-				hGloves.fPrice = fPrice;
-				
 				hGloves.iIndex = iIndex;
 				hGloves.iType = GetGloveTypeNum(sGloveType);
 				hGloves.iDefIndex = iDefIndex;
+				hGloves.fPrice = fPrice;
 				
 				if(hGloves.iType == -1)
 				{

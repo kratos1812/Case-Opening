@@ -14,7 +14,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define PLUGIN_VERSION "1.3.0b"
+#define PLUGIN_VERSION "1.4.0b"
 
 /*
  - 1.3.0b
@@ -132,6 +132,9 @@ public void OnPluginStart()
 	g_hNewPlayerDefaultBalance = CreateConVar("sm_cases_new_players_default_balance", "200.0", "How much money new players start up with?", FCVAR_NOTIFY, true, 0.0);
 	g_hNewPlayerDefaultBalance.AddChangeHook(OnConvarsChanged);
 	
+	g_hCustomSeedPrice = CreateConVar("sm_cases_custom_pattern_price", "50000.0", "Price for setting a pattern for a weapon. 0.0 = disable", FCVAR_NOTIFY, true, 0.0);
+	g_hCustomSeedPrice.AddChangeHook(OnConvarsChanged);
+	
 	AutoExecConfig(true, "case_opening_kratoss");
 	
 	g_hBalance = new Cookie("Case Opening Balance", "Stores the credits of the players", CookieAccess_Private);
@@ -146,6 +149,7 @@ public void OnPluginStart()
 
 public void OnMapStart()
 {
+	OnConfigsExecuted();
 	LoadItems();
 	LoadCases();
 	CreateMenus();
@@ -273,6 +277,21 @@ public void OnClientSayCommand_Post(int iClient, const char[] sCommand, const ch
 				Gloves_SetClientFloat(iClient, fWear);
 			}
 		}
+		else if(g_bWaitingForPattern[iClient])
+		{
+			int iPattern;
+			if(!sArgs[0] || StringToIntEx(sArgs, iPattern) != strlen(sArgs))
+			{
+				CPrintToChat(iClient, "%T", "InvalidAmount", iClient);
+			}
+			else
+			{
+				g_bWaitingForPattern[iClient] = false;
+				iPattern = StringToInt(sArgs);
+				Weapons_SetClientSeed(iClient, g_sTempWeapon[iClient], iPattern);
+				strcopy(g_sTempWeapon[iClient], sizeof(g_sTempWeapon[]), "");
+			}
+		}
 	}
 }
 
@@ -330,11 +349,13 @@ void OnConvarsChanged(ConVar hConVar, const char[] sOldValue, const char[] sNewV
 	{
 		g_fPriceMultiplierSkins = hConVar.FloatValue;
 		LoadItems();
+		LoadGloves();
 	}
 	else if(hConVar == g_hPriceMultiplierGloves)
 	{
 		g_fPriceMultiplierGloves = hConVar.FloatValue;
 		LoadItems();
+		LoadGloves();
 	}
 	else if(hConVar == g_hOpenDelay)
 	{
@@ -347,6 +368,10 @@ void OnConvarsChanged(ConVar hConVar, const char[] sOldValue, const char[] sNewV
 	else if(hConVar == g_hNewPlayerDefaultBalance)
 	{
 		g_fDefaultBalance = hConVar.FloatValue;
+	}
+	else if(hConVar == g_hCustomSeedPrice)
+	{
+		g_fCustomSeedPrice = hConVar.FloatValue;
 	}
 	
 	CheckBalances();
@@ -365,15 +390,17 @@ public void OnConfigsExecuted()
 	g_bEnableMarketGloves = g_hEnableMarketGloves.BoolValue;
 	g_bEnableQuickSell = g_hEnableQuickSell.BoolValue;
 	g_iBalanceMode = g_hBalanceMode.IntValue;
-	g_fPriceMultiplierSkins = g_hPriceMultiplierGloves.FloatValue;
+	g_fPriceMultiplierSkins = g_hPriceMultiplierSkins.FloatValue;
 	g_fPriceMultiplierGloves = g_hPriceMultiplierGloves.FloatValue;
 	g_fOpenDelay = g_hOpenDelay.FloatValue;
 	g_bOverrideCommands = g_hCommandsOverride.BoolValue;
 	g_bQuickSellGloves = g_hEnableQuickSellGloves.BoolValue;
 	g_fDefaultBalance = g_hNewPlayerDefaultBalance.FloatValue;
+	g_fCustomSeedPrice = g_hCustomSeedPrice.FloatValue;
 	
 	CheckBalances();
 	LoadItems();
+	LoadGloves();
 }
 
 Action CommandListener_BlockWSCommand(int iClient, const char[] sCommand, int iArgc)

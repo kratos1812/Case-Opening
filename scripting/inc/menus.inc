@@ -348,7 +348,7 @@ int SkinsMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 				hSkinsMenu.SetTitle("%T", "ConfigureSkin", iClient, PLUGIN_VERSION, GetBalance(iClient), GetTotalSkinsCount(iClient), sKey, GetTotalGlovesCount(iClient)); 
 				hSkinsMenu.ExitBackButton = true;
 				
-				int iSkinId = hClientSkins.Get(iParam2 - 1);
+				int iSkinId = hClientSkins.Get(iParam2 - 1), iPattern = Weapons_GetClientSeed(iClient, sKey);
 				Format(sKey, sizeof(sKey), "%s;%i", sKey, iSkinId);
 				float fBalance = GetBalance(iClient);
 				
@@ -383,6 +383,12 @@ int SkinsMenu_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 						Format(sItem, sizeof(sItem), "%T", "QuickSell_NoPrice", iClient);
 						hSkinsMenu.AddItem(sKey, sItem, ITEMDRAW_DISABLED);
 					}					
+				}
+				
+				if(g_fCustomSeedPrice != 0.0)
+				{
+					Format(sItem, sizeof(sItem), "%T", "GetSeed", iClient, iPattern, g_fCustomSeedPrice);
+					hSkinsMenu.AddItem(sKey, sItem, fBalance < g_fCustomSeedPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);					
 				}
 
 				hSkinsMenu.Display(iClient, MENU_TIME_FOREVER);			
@@ -435,6 +441,22 @@ int SkinMenu_Handler(Menu hMenu, MenuAction iAction, int iParam1, int iParam2)
 				case 4: // Toggle StarTrack
 				{
 					return fBalance < g_fStarTrackPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT;
+				}
+				case 5: // Custom Seed OR Quick sell
+				{
+					if(g_bEnableQuickSell)
+					{
+						return ITEMDRAW_DEFAULT;
+					}
+					
+					else
+					{
+						return fBalance < g_fCustomSeedPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT;
+					}
+				}
+				case 6: // Custom Seed
+				{
+					return fBalance < g_fCustomSeedPrice ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT;
 				}
 			}
 			return ITEMDRAW_DEFAULT;
@@ -497,39 +519,56 @@ int SkinMenu_Handler(Menu hMenu, MenuAction iAction, int iParam1, int iParam2)
 					Weapons_ToggleClientStarTrack(iClient, sData[0]);
 					SetBalance(iClient, GetBalance(iClient) - g_fStarTrackPrice);
 				}
-				case 5: // Quick sell
+				case 5: // Custom Seed OR Quick sell
 				{
-					ArrayList hClientSkins;
-					g_hInventory[iClient].GetValue(sData[0], hClientSkins);
-					
-					enum_skin hWeaponSkin;
-					
-					int iIndex, iItemId = StringToInt(sData[1]);
-					
-					if(g_hSkins.GetArray(iItemId, hWeaponSkin))
+					if(g_bEnableQuickSell) // Quick Sell
 					{
-						if(IsKnife(sData[0]))
+						ArrayList hClientSkins;
+						g_hInventory[iClient].GetValue(sData[0], hClientSkins);
+						
+						enum_skin hWeaponSkin;
+						
+						int iIndex, iItemId = StringToInt(sData[1]);
+						
+						if(g_hSkins.GetArray(iItemId, hWeaponSkin))
 						{
-							Weapons_SetClientKnife(iClient, "weapon_knife", true);
+							if(IsKnife(sData[0]))
+							{
+								Weapons_SetClientKnife(iClient, "weapon_knife", true);
+							}
+							
+							if(Weapons_GetClientSkin(iClient, sData[0]) == hWeaponSkin.iSkinIndex)
+							{
+								Weapons_SetClientSkin(iClient, sData[0], 0);
+							}
+							
+							SetBalance(iClient, GetBalance(iClient) + hWeaponSkin.fPrice);
+							
+							iIndex = hClientSkins.FindValue(iItemId);
+							if(iIndex != -1)
+							{
+								hClientSkins.Erase(iIndex);
+							}
+							CPrintToChat(iClient, "%T", "SkinSold", iClient, g_sItemRarity[hWeaponSkin.iRarity][1], hWeaponSkin.szName, hWeaponSkin.fPrice);
+							DB_DeleteSkin(GetSteamAccountID(iClient), iItemId);
 						}
 						
-						if(Weapons_GetClientSkin(iClient, sData[0]) == hWeaponSkin.iSkinIndex)
-						{
-							Weapons_SetClientSkin(iClient, sData[0], 0);
-						}
-						
-						SetBalance(iClient, GetBalance(iClient) + hWeaponSkin.fPrice);
-						
-						iIndex = hClientSkins.FindValue(iItemId);
-						if(iIndex != -1)
-						{
-							hClientSkins.Erase(iIndex);
-						}
-						CPrintToChat(iClient, "%T", "SkinSold", iClient, g_sItemRarity[hWeaponSkin.iRarity][1], hWeaponSkin.szName, hWeaponSkin.fPrice);
-						DB_DeleteSkin(GetSteamAccountID(iClient), iItemId);
+						ShowWeaponSkins(iClient, sData[0], 0);
 					}
-					
-					ShowWeaponSkins(iClient, sData[0], 0);
+					else if(g_fCustomSeedPrice != 0.0)
+					{
+						g_bWaitingForPattern[iParam1] = true;
+						CPrintToChat(iClient, "%T", "SeedInChat", iClient);
+						SetBalance(iClient, GetBalance(iClient) - g_fCustomSeedPrice);
+						strcopy(g_sTempWeapon[iClient], sizeof(g_sTempWeapon[]), sData[0]);
+					}
+				}
+				case 6: // Custom Seed
+				{
+					g_bWaitingForPattern[iParam1] = true;
+					CPrintToChat(iClient, "%T", "SeedInChat", iClient);
+					SetBalance(iClient, GetBalance(iClient) - g_fCustomSeedPrice);
+					strcopy(g_sTempWeapon[iClient], sizeof(g_sTempWeapon[]), sData[0]);
 				}
 			}
 			
@@ -578,7 +617,7 @@ int Market_Handler(Menu hMenu, MenuAction iAction, int iClient, int iParam2)
 	{
 		case MenuAction_Select:
 		{
-			g_hMarketItemMenu[iParam2].SetTitle("%T", "SkinsMarketTitle", iClient, PLUGIN_VERSION, iClient, PLUGIN_VERSION, GetBalance(iClient), GetTotalSkinsCount(iClient), GetTotalGlovesCount(iClient));
+			g_hMarketItemMenu[iParam2].SetTitle("%T", "SkinsMarketTitle", iClient, PLUGIN_VERSION, GetBalance(iClient), GetTotalSkinsCount(iClient), GetTotalGlovesCount(iClient));
 			g_hMarketItemMenu[iParam2].Display(iClient, MENU_TIME_FOREVER);
 		}
 		
@@ -730,6 +769,7 @@ int MarketGlovesItem_Handler(Menu hMenu, MenuAction iAction, int iClient, int iP
 			
 			SetBalance(iClient, GetBalance(iClient) - hGloves.fPrice);
 			
+			hMenu.SetTitle("%T", "SkinsMarketTitle", iClient, PLUGIN_VERSION, GetBalance(iClient), GetTotalSkinsCount(iClient), GetTotalGlovesCount(iClient));
 			hMenu.DisplayAt(iClient, hMenu.Selection, MENU_TIME_FOREVER);
 		}
 		

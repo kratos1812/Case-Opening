@@ -1,5 +1,16 @@
 "Phrases"
 {
+	"SeedInChat"
+	{
+		"en"			"[{lime}CASES{default}] Waiting for you to write a pattern. Example: \"100\"."
+	}
+
+	"GetSeed"
+	{
+		"#format"		"{1:i},{2:.1f}"
+		"en"			"Set a pattern(Current: {1}) | Price: [${2}] | (For this weapon)"
+	}
+
 	"NotYet"
 	{
 		"#format"		"{1:.1f}"

@@ -27,6 +27,9 @@ native void Weapons_SetClientWear(int client, const char[] weapon, float wear);
 // Set client's seed for a weapon. 
 native void Weapons_SetClientSeed(int client, const char[] weapon, int seed);
 
+// Get client's seed for a weapon. 
+native int Weapons_GetClientSeed(int client, const char[] weapon);
+
 // Set client's nametag for a weapon
 native void Weapons_SetClientNameTag(int client, const char[] weapon, const char[] name);
 

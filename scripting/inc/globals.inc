@@ -19,6 +19,7 @@ bool g_bEnableQuickSell;
 bool g_bStoreExists;
 bool g_bShopExists;
 bool g_bQuickSellGloves;
+bool g_bWaitingForPattern[MAXPLAYERS + 1];
 
 char g_sTempWeapon[MAXPLAYERS + 1][32];
 
@@ -49,6 +50,7 @@ ConVar g_hPriceMultiplierGloves;
 ConVar g_hOpenDelay;
 ConVar g_hEnableQuickSellGloves;
 ConVar g_hNewPlayerDefaultBalance;
+ConVar g_hCustomSeedPrice;
 
 float g_fFloatPrice;
 float g_fSeedPrice;
@@ -60,6 +62,7 @@ float g_fPriceMultiplierSkins;
 float g_fPriceMultiplierGloves;
 float g_fOpenDelay;
 float g_fDefaultBalance;
+float g_fCustomSeedPrice;
 
 int g_iBalanceMode;
 
